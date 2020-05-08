@@ -127,3 +127,11 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# gmail authentication
+*.json
+*.pickle
+
+# local stuff
+localtools/
+test.py
