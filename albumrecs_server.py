@@ -28,7 +28,7 @@ def main():
 
     # Create album recs
     album_recs = AlbumRecs(args.gmail_creds)
-    schedule.every().thursday.at("17:30").do(serve, album_recs)
+    schedule.every().sunday.at("20:00").do(serve, album_recs)
 
     while True:
         schedule.run_pending()
