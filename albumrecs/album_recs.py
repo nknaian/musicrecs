@@ -58,7 +58,7 @@ class AlbumRecs:
             sender = self.snoozin.get_sender(msg_id)
             if sender not in self.album_recs:
                 # Mark message as read
-                self.snoozin.mark_msg_read(msg_id)
+                self.snoozin.remove_msg_labels(msg_id, ['UNREAD'])
 
                 # Add the spotify link from the message body to the album_recs 
                 message_body = self.snoozin.get_msg_body(msg_id)
