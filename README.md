@@ -1,5 +1,5 @@
 # albumrecs
-An Gmail-powered album recommendation exchange platform with snoozin and friends
+A Gmail-powered album recommendation exchange platform with snoozin and friends
 
 # usage
 - Clone, create a python 3 venv and install the requirements
