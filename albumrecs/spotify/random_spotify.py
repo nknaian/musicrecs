@@ -2,9 +2,13 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from random_words import RandomWords
 
+
 class RandomSpotify:
+    """Use spotipy to get random music from spotify"""
+
     def __init__(self):
-        self.sp = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials())
+        self.sp = spotipy.Spotify(
+            client_credentials_manager=SpotifyClientCredentials())
         self.rw = RandomWords()
 
     def get_random_album(self):
@@ -15,7 +19,8 @@ class RandomSpotify:
         while not_found:
             search_term = self.rw.random_words(count=2)
 
-            album_search = self.sp.search(search_term, type="album", market="US")
+            album_search = self.sp.search(search_term, type="album",
+                                          market="US")
 
             if len(album_search['albums']['items']) == 0:
                 continue
