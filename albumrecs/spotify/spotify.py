@@ -2,21 +2,13 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 from random_words import RandomWords
 
-
-SEARCH_LIMIT = 10
-
-
-class Album:
-    def __init__(self, spotify_album, search_term=None):
-        self.name = spotify_album["name"]
-        self.artist_names = [
-            artist["name"] for artist in spotify_album["artists"]
-        ]
-        self.link = spotify_album["external_urls"]["spotify"]
-        self.search_term = search_term
+from .album import Album
 
 
 class Spotify:
+    """Class to interface with Spotify API through an
+    instance of spotipy.
+    """
 
     def __init__(self):
         self.sp = spotipy.Spotify(
@@ -24,6 +16,8 @@ class Spotify:
 
     def get_random_album(self):
         """Gets a random spotify album by searching random words"""
+
+        SEARCH_LIMIT = 10
 
         def get_search_term():
             random_words = RandomWords()
@@ -44,11 +38,7 @@ class Spotify:
 
             num_searches += 1
 
-        print(
-            "Error: No album found after {} searches".format(
-                SEARCH_LIMIT
-            )
-        )
+        print(f"\nError: No album found after {SEARCH_LIMIT} searches")
 
     def get_album_from_link(self, album_link):
         spotify_album = self.sp.album(album_link)

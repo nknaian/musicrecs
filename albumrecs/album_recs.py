@@ -46,24 +46,30 @@ class AlbumRecs:
     def send(self):
         def create_html_message_body():
             def get_formatted_album(album):
+
                 artist_names_str = ', '.join(album.artist_names)
-                return "<a href={}>{}</a> by {}<br>".format(
-                    album.link, album.name, artist_names_str
+
+                img_link = (
+                    f"<a href='{album.link}'>"
+                    f"<img src='{album.img_url}'"
+                    f"alt='{album.name}"
+                    f"style='width:{album.IMG_DIMEN}px;"
+                    f"height:{album.IMG_DIMEN}px;"
+                    "border:0;'>"
+                    "</a>"
                 )
 
-            header = (
-                "snoozin and {} present their latest albumrecs:"
-            ).format(self.GROUP_NAME if self.GROUP_NAME != "" else "friends")
+                return (
+                    f"<b>{album.name}</b> by {artist_names_str}<br>"
+                    f"{img_link}<br>"
+                    "<br>"
+                )
 
             formatted_albums = ""
             for album in self._get_shuffled_albums():
                 formatted_albums += get_formatted_album(album)
 
-            return f"""
-                {header}<br>
-                <br>
-                {formatted_albums}
-            """
+            return formatted_albums
 
         # Set who the email will be sent to
         to = ""
@@ -71,7 +77,9 @@ class AlbumRecs:
             to += "{}; ".format(participant)
 
         # Set the subject of the email
-        subject = "albumrecs"
+        subject = (
+            "albumrecs by snoozin 'n {}"
+        ).format(self.GROUP_NAME if self.GROUP_NAME != "" else "friends")
 
         # Create the body of the email formatted in html
         message_body = create_html_message_body()
