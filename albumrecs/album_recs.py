@@ -3,7 +3,7 @@ import re
 import time
 
 import snoozingmail
-import albumrecs.spotify.random_spotify as random_spotify
+import albumrecs.spotify.spotify as spotify
 
 
 """regex used to find spotify album link in message body of an email"""
@@ -20,7 +20,7 @@ class AlbumRecs:
     def __init__(self, gmail_credentials, group_name=None):
         self.album_recs = {}
         self.snoozin = snoozingmail.Snoozin(gmail_credentials)
-        self.random_spotify = random_spotify.RandomSpotify()
+        self.spotify = spotify.Spotify()
 
         if group_name:
             self.GROUP_NAME = group_name
@@ -29,39 +29,55 @@ class AlbumRecs:
 
         random.seed(time.time())
 
-    def get_shuffled_participants(self):
+    def _get_shuffled_participants(self):
         participants = []
         for participant in self.album_recs.keys():
             participants.append(participant)
         random.shuffle(participants)
         return participants
 
-    def get_shuffled_album_recs(self):
-        recs = []
-        for rec in self.album_recs.values():
-            recs.append(rec)
-        random.shuffle(recs)
-        return recs
+    def _get_shuffled_albums(self):
+        albums = []
+        for album in self.album_recs.values():
+            albums.append(album)
+        random.shuffle(albums)
+        return albums
 
     def send(self):
+        def create_html_message_body():
+            def get_formatted_album(album):
+                artist_names_str = ', '.join(album.artist_names)
+                return "<a href={}>{}</a> by {}<br>".format(
+                    album.link, album.name, artist_names_str
+                )
+
+            header = (
+                "snoozin and {} present their latest albumrecs:"
+            ).format(self.GROUP_NAME if self.GROUP_NAME != "" else "friends")
+
+            formatted_albums = ""
+            for album in self._get_shuffled_albums():
+                formatted_albums += get_formatted_album(album)
+
+            return f"""
+                {header}<br>
+                <br>
+                {formatted_albums}
+            """
+
         # Set who the email will be sent to
         to = ""
-        for participant in self.get_shuffled_participants():
+        for participant in self._get_shuffled_participants():
             to += "{}; ".format(participant)
 
         # Set the subject of the email
         subject = "albumrecs"
 
-        # Create the body of the email
-        message_text = (
-            "snoozin and {} present their latest albumrecs:\n\n"
-        ).format(self.GROUP_NAME if self.GROUP_NAME != "" else "friends")
-
-        for i, rec in enumerate(self.get_shuffled_album_recs()):
-            message_text += "albumrec {}:\n{}\n".format(i+1, rec)
+        # Create the body of the email formatted in html
+        message_body = create_html_message_body()
 
         # Send the email
-        self.snoozin.send(to, subject, message_text)
+        self.snoozin.send(to, subject, message_body, html=True)
 
     def add_from_gmail(self):
         # Find matching albumrec emails
@@ -79,7 +95,7 @@ class AlbumRecs:
                 # Mark message as read
                 self.snoozin.remove_msg_labels(msg_id, ['UNREAD'])
 
-                # Add the spotify link from the message body to the album_recs
+                # Add the spotify link from the message body to the albums
                 message_body = self.snoozin.get_msg_body(msg_id)
                 if message_body:
                     album_link_re = re.search(ALBUM_LINK_RE, message_body)
@@ -90,9 +106,12 @@ class AlbumRecs:
                         ).format(msg_id, sender)
                         print(error_msg)
                     else:
-                        # Add sender's album_link to the album_recs
-                        self.album_recs[sender] = album_link_re.group(0)
+                        # Add sender's album rec to the albums using
+                        # the spotify album link that they sent
+                        album = self.spotify.get_album_from_link(
+                            album_link_re.group(0))
+                        self.album_recs[sender] = album
 
     def add_snoozin_rec(self):
         sender = "snoozinforabruisin@gmail.com"
-        self.album_recs[sender] = self.random_spotify.get_random_album()
+        self.album_recs[sender] = self.spotify.get_random_album()
