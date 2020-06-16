@@ -1,4 +1,4 @@
-from abc import ABC
+
 
 class Music:
     """Base class for a music object. Holds select """

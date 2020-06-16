@@ -17,7 +17,7 @@ class Spotify:
 
     def get_random_music(self):
         """Gets random spotify music by searching random words
-        
+
         Args:
             type: Type of music object. Either album or track
 
@@ -49,9 +49,14 @@ class Spotify:
                         if item['type'] == "track":
                             return Track(item, search_term)
                     else:
-                        raise Exception(f"Unknown music type {self.MUSIC_TYPE}")
+                        raise Exception(
+                            f"Unknown music type {self.MUSIC_TYPE}")
 
-        raise Exception(f"\nError: No {self.MUSIC_TYPE} found after {SEARCH_LIMIT} searches")
+        raise Exception(
+            "\nError: No {} found after {} searches".format(
+                self.MUSIC_TYPE, SEARCH_LIMIT
+            )
+        )
 
     def get_music_from_link(self, link):
         if self.MUSIC_TYPE == "album":
