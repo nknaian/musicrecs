@@ -1,6 +1,6 @@
 import argparse
 
-from albumrecs.album_recs import MusicRecs
+from musicrecs.music_recs import MusicRecs
 
 
 def parse_args():

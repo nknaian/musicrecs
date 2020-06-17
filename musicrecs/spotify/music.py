@@ -29,9 +29,7 @@ class Music:
 
 
 class Album(Music):
-    """Class to hold selected information about a spotify
-    album that is useful to albumrecs
-    """
+    """Class to hold selected information about a spotify album."""
 
     IMG_DIMEN = 300
 
@@ -45,9 +43,7 @@ class Album(Music):
 
 
 class Track(Music):
-    """Class to hold selected information about a spotify
-    album that is useful to albumrecs
-    """
+    """Class to hold selected information about a spotify track."""
 
     IMG_DIMEN = 300
 

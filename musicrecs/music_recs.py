@@ -3,7 +3,7 @@ import re
 import time
 
 import snoozingmail
-import albumrecs.spotify.spotify as spotify
+import musicrecs.spotify.spotify as spotify
 
 
 """regex used to find spotify music links in message body of an email"""
@@ -43,6 +43,33 @@ class MusicRecs:
         random.shuffle(music_list)
         return music_list
 
+    def _create_html_message_body(self):
+        def get_formatted_music(music):
+
+            artist_names_str = ', '.join(music.artist_names)
+
+            img_link = (
+                f"<a href='{music.link}'>"
+                f"<img src='{music.img_url}'"
+                f"alt='{music.name}"
+                f"style='width:{music.IMG_DIMEN}px;"
+                f"height:{music.IMG_DIMEN}px;"
+                "border:0;'>"
+                "</a>"
+            )
+
+            return (
+                f"<b>{music.name}</b> by {artist_names_str}<br>"
+                f"{img_link}<br>"
+                "<br>"
+            )
+
+        formatted_music = ""
+        for music in self._get_shuffled_music():
+            formatted_music += get_formatted_music(music)
+
+        return formatted_music
+
     def _add_music_from_message(self, sender, message_body):
         if self.MUSIC_TYPE == "album":
             link_re = re.search(ALBUM_LINK_RE, message_body)
@@ -65,33 +92,6 @@ class MusicRecs:
             self.music_recs[sender] = music
 
     def send(self):
-        def create_html_message_body():
-            def get_formatted_music(music):
-
-                artist_names_str = ', '.join(music.artist_names)
-
-                img_link = (
-                    f"<a href='{music.link}'>"
-                    f"<img src='{music.img_url}'"
-                    f"alt='{music.name}"
-                    f"style='width:{music.IMG_DIMEN}px;"
-                    f"height:{music.IMG_DIMEN}px;"
-                    "border:0;'>"
-                    "</a>"
-                )
-
-                return (
-                    f"<b>{music.name}</b> by {artist_names_str}<br>"
-                    f"{img_link}<br>"
-                    "<br>"
-                )
-
-            formatted_music = ""
-            for music in self._get_shuffled_music():
-                formatted_music += get_formatted_music(music)
-
-            return formatted_music
-
         # Set who the email will be sent to
         to = ""
         for participant in self._get_shuffled_participants():
@@ -104,7 +104,7 @@ class MusicRecs:
                  self.GROUP_NAME if self.GROUP_NAME != "" else "friends")
 
         # Create the body of the email formatted in html
-        message_body = create_html_message_body()
+        message_body = self._create_html_message_body()
 
         # Send the email
         self.snoozin.send(to, subject, message_body, html=True)
