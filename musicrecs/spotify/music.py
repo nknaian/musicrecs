@@ -45,7 +45,7 @@ class Album(Music):
 class Track(Music):
     """Class to hold selected information about a spotify track."""
 
-    IMG_DIMEN = 300
+    IMG_DIMEN = 64
 
     def __init__(self, spotify_track, search_term=None):
 
