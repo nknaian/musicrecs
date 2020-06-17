@@ -1,5 +1,5 @@
-# albumrecs
-A Gmail-powered Spotify album recommendation exchange platform with snoozin and friends
+# musicrecs
+A Gmail-powered Spotify music recommendation exchange platform with snoozin and friends
 
 # setup
 - Clone, create a python 3 venv and install the requirements
@@ -7,7 +7,8 @@ A Gmail-powered Spotify album recommendation exchange platform with snoozin and 
 - See https://github.com/plamere/spotipy for the Spotify API setup
 
 # usage
-Run albumrecs as a module:
+Run musicrecs as a module:
 ```bash
-python -m albumrecs --gmail_creds credentials.json --group_name myfriends
+python -m musicrecs --gmail_creds credentials.json --group_name myfriends --music_type album
 ```
+Possible music types are 'album' and 'track'.
