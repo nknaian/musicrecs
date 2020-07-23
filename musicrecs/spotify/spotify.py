@@ -25,8 +25,7 @@ class Spotify:
 
         def get_search_term():
             random_words = RandomWords()
-            word_list = random_words.random_words(count=2)
-            return " ".join(word_list)
+            return random_words.random_word()
 
         SEARCH_LIMIT = 10
         num_searches = 0
