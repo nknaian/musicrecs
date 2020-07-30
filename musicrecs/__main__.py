@@ -17,17 +17,22 @@ def parse_args():
 
 """Main"""
 
-# Parse args
-args = parse_args()
+try:
+    # Parse args
+    args = parse_args()
 
-# Create album recs
-album_recs = MusicRecs(args.gmail_creds, args.group_name, args.music_type)
+    # Create album recs
+    album_recs = MusicRecs(args.gmail_creds, args.group_name, args.music_type)
 
-# Add album recs that have been recieved from gmail
-album_recs.add_from_gmail()
+    # Add in snoozin's album pick
+    album_recs.add_snoozin_rec()
 
-# Add in snoozin's album pick
-album_recs.add_snoozin_rec()
+    # Add album recs that have been recieved from gmail
+    album_recs.add_from_gmail()
 
-# Send the recs to those who participated
-album_recs.send()
+    # Send the recs to those who participated
+    album_recs.send()
+
+except Exception:
+    import traceback
+    traceback.print_exc()
