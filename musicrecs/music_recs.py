@@ -112,7 +112,8 @@ class MusicRecs:
         # Send email to snoozin with search term used for the random search
         snoozin_rec = self.music_recs["snoozinforabruisin@gmail.com"]
         self.snoozin.send(
-            "snoozinforabruisin@gmail.com", "search term",
+            "snoozinforabruisin@gmail.com",
+            f"search term {self.GROUP_NAME} {self.MUSIC_TYPE}",
             f"The search term used was:\n\n{snoozin_rec.search_term}")
 
     def add_from_gmail(self):
