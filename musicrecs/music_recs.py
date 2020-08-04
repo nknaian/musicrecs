@@ -1,6 +1,7 @@
 import random
 import re
 import time
+import copy
 
 import snoozingmail
 import musicrecs.spotify.spotify as spotify
@@ -79,11 +80,10 @@ class MusicRecs:
             raise Exception(f"Unknown music type {self.MUSIC_TYPE}")
 
         if link_re is None:
-            error_msg = (
-                "Error: spotify {} link not found for "
-                "from {}"
-            ).format(self.MUSIC_TYPE, sender)
-            print(error_msg)
+            raise Exception(
+                "Spotify {} link not found for "
+                "from {}".format(self.MUSIC_TYPE, sender)
+            )
         else:
             # Add sender's music to recs using
             # the link that they sent
@@ -141,3 +141,10 @@ class MusicRecs:
     def add_snoozin_rec(self):
         sender = "snoozinforabruisin@gmail.com"
         self.music_recs[sender] = self.spotify.get_random_music()
+
+    def get_human_participants(self):
+        human_music_recs = copy.deepcopy(self.music_recs)
+        human_music_recs.pop(
+            "snoozinforabruisin@gmail.com"
+        )
+        return list(human_music_recs.keys())
