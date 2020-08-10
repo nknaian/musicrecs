@@ -91,6 +91,15 @@ class MusicRecs:
                 link_re.group(0))
             self.music_recs[sender] = music
 
+    def _match_subject(self, musicrec_type, group_name):
+        group_search = ":{}".format(group_name)
+        query = (
+            "subject:{}{} AND is:unread AND in:inbox "
+        ).format(musicrec_type,
+                 group_search if self.GROUP_NAME != "" else "")
+
+        return self.snoozin.get_matching_msgs(query)
+
     def send(self):
         # Set who the email will be sent to
         to = ""
@@ -118,13 +127,7 @@ class MusicRecs:
 
     def add_from_gmail(self):
         # Find matching emails
-        group_search = ":{}".format(self.GROUP_NAME)
-        query = (
-            "subject:{}rec{} AND is:unread AND in:inbox "
-        ).format(self.MUSIC_TYPE,
-                 group_search if self.GROUP_NAME != "" else "")
-
-        msg_ids = self.snoozin.get_matching_msgs(query)
+        msg_ids = self._match_subject(f"{self.MUSIC_TYPE}rec", self.GROUP_NAME)
 
         # Add the newest rec from each sender
         for msg_id in msg_ids:
