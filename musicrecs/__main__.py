@@ -1,6 +1,8 @@
 import argparse
 
 from musicrecs.music_recs import MusicRecs
+from musicrecs.apps_script_interface.guesses_form_email \
+    import send_guesses_form_email
 
 
 def parse_args():
@@ -64,6 +66,9 @@ try:
             print("You've decided not to send these recs")
     else:
         music_recs.send()
+
+    # Send email for the guesses form creation
+    send_guesses_form_email(music_recs)
 
 except Exception:
     import traceback

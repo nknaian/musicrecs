@@ -118,6 +118,9 @@ class MusicRecs:
         sender = "snoozinforabruisin@gmail.com"
         self.music_recs[sender] = self.spotify.get_random_music()
 
+    def get_all_participants(self):
+        return self._get_shuffled_participants()
+
     def get_music_list(self, fmt_type):
         return [
             music.format(fmt_type) for music in self._get_shuffled_music()
