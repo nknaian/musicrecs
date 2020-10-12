@@ -27,6 +27,30 @@ class Music:
         if self.img_url is None:
             print("Error: No matching album image found")
 
+    def format(self, fmt_type):
+        if fmt_type == "text":
+            return f"{self.name} by {', '.join(self.artist_names)}"
+
+        elif fmt_type == "html":
+            img_link = (
+                f"<a href='{self.link}'>"
+                f"<img src='{self.img_url}'"
+                f"alt='{self.name}"
+                f"style='width:{self.IMG_DIMEN}px;"
+                f"height:{self.IMG_DIMEN}px;"
+                "border:0;'>"
+                "</a>"
+            )
+
+            return (
+                f"<b>{self.name}</b> by {', '.join(self.artist_names)}<br>"
+                f"{img_link}"
+            )
+        else:
+            raise Exception(
+                f"Unknown format type {fmt_type}. Options are ['text', 'html']"
+            )
+
 
 class Album(Music):
     """Class to hold selected information about a spotify album."""
