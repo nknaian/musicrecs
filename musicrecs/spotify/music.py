@@ -1,35 +1,33 @@
+from .artist import Artist
 
 
 class Music:
-    """Base class for a music object. Holds select """
+    """Base class for a music object. Holds selected information
+    about a spotify music item (either track or album)
+    """
 
     def __init__(self, spotify_music, search_term=None):
         # Name of the spotify music object
         self.name = spotify_music["name"]
 
-        # List of artist names credited
-        self.artist_names = [
-            artist["name"] for artist in spotify_music["artists"]
+        # List of artists credited
+        self.artists = [
+            Artist(artist) for artist in spotify_music["artists"]
         ]
 
-        # Get the open.spotify link to the album
+        # Get the open.spotify link to the music
         self.link = spotify_music["external_urls"]["spotify"]
 
-        # Set search term that was used to get album
-        self.search_term = search_term
+        # Get the spotify id of the music
+        self.id = spotify_music["id"]
 
-    def _set_album_img(self, spotify_album, img_dimen):
-        self.img_url = None
-        for img in spotify_album["images"]:
-            if img["height"] == img_dimen and img["width"] == img_dimen:
-                self.img_url = img["url"]
-                break
-        if self.img_url is None:
-            print("Error: No matching album image found")
+        # Set search term that was used to get music
+        self.search_term = search_term
 
     def format(self, fmt_type):
         if fmt_type == "text":
-            return f"{self.name} by {', '.join(self.artist_names)}"
+            return (f"{self.name} by "
+                    f"{', '.join(artist.name for artist in self.artists)}")
 
         elif fmt_type == "html":
             img_link = (
@@ -43,13 +41,26 @@ class Music:
             )
 
             return (
-                f"<b>{self.name}</b> by {', '.join(self.artist_names)}<br>"
+                f"<b>{self.name}</b> by "
+                f"{', '.join(artist.name for artist in self.artists)}<br>"
                 f"{img_link}"
             )
         else:
             raise Exception(
                 f"Unknown format type {fmt_type}. Options are ['text', 'html']"
             )
+
+    def get_primary_artist(self):
+        return self.artists[0]
+
+    def _set_album_img(self, spotify_album, img_dimen):
+        self.img_url = None
+        for img in spotify_album["images"]:
+            if img["height"] == img_dimen and img["width"] == img_dimen:
+                self.img_url = img["url"]
+                break
+        if self.img_url is None:
+            print("Error: No matching album image found")
 
 
 class Album(Music):

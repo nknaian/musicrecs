@@ -1,3 +1,2 @@
 snoozingmail
 spotipy
-RandomWords
