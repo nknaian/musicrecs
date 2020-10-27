@@ -1,0 +1,43 @@
+# This workflow will install Python dependencies, run tests and lint with a variety of Python versions
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-python-with-github-actions
+
+name: Python package
+
+on:
+  workflow_dispatch:
+    inputs:
+      music_type:
+        description: 'type of musicrec'
+        required: false
+        default: 'album'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: [3.5, 3.6, 3.7, 3.8]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v2
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: setup gmail api env
+      run: |
+        echo ${{secrets.GMAIL_API_JSON}} >> ./client_secret_snoozin.json
+        echo ${{secrets.GMAIL_API_TOKEN}} >> ./token.pickle
+      shell: bash
+    - name: setup spotipy env and run musicrecs
+      run: |
+        python -m musicrecs -c ./client_secret_snoozin.json -g testing -m  ${{ github.event.inputs.music_type }}
+      shell: bash
+      env:
+        SPOTIPY_ID : ${{secrets.SPOTIPY_ID}}
+        SPOTIPY_SECRET: ${{secrets.SPOTIPY_SECRET}}
