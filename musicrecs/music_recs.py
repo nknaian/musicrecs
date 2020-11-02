@@ -182,9 +182,10 @@ class MusicRecs:
 
     def get_human_participants(self):
         human_music_recs = copy.deepcopy(self.music_recs)
-        human_music_recs.pop(
-            SNOOZIN_EMAIL
-        )
+        if SNOOZIN_EMAIL in human_music_recs:
+            human_music_recs.pop(
+                SNOOZIN_EMAIL
+            )
         return list(human_music_recs.keys())
 
     """Private Functions"""
