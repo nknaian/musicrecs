@@ -234,6 +234,11 @@ class MusicRecs:
     def _matching_emails(self):
         matching_emails = []
 
+        # Get unread emails which have the music type, group name label
+        query = f"is:unread AND label:{self.MUSIC_TYPE}rec_{self.GROUP_NAME}"
+
+        matching_emails.extend(self.snoozin.get_matching_msgs(query))
+
         # Get unread inbox emails which match the subject filter
         query = f"is:unread AND in:inbox AND subject:{self.MUSIC_TYPE}rec"
 
@@ -241,12 +246,6 @@ class MusicRecs:
             query += f":{self.GROUP_NAME}"
 
         matching_emails.extend(self.snoozin.get_matching_msgs(query))
-
-        # Legacy support for shityo
-        if self.GROUP_NAME == "someppl" and self.MUSIC_TYPE == "album":
-            query = ("is:unread AND in:inbox AND subject:"
-                     f"{self.MUSIC_TYPE}rec:shityo")
-            matching_emails.extend(self.snoozin.get_matching_msgs(query))
 
         return matching_emails
 
