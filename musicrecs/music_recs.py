@@ -20,9 +20,6 @@ SNOOZIN_CANNED_EMAIL = "snoozinforabruisin+canned.response@gmail.com"
 
 DICTIONARY_FILE = "musicrecs/random_words/dictionary.txt"
 
-SEARCH_TERM_WORD_COUNT = 2
-
-
 class MusicRecs:
     """Music recommendation manager class. Interfaces with
     gmail through snoozingmail to get recommendations from
@@ -163,7 +160,7 @@ class MusicRecs:
 
             while music is None:
                 search_term = " ".join(
-                    rw_gen.get_random_words(SEARCH_TERM_WORD_COUNT)
+                    rw_gen.get_random_words(random.randint(1, 2))
                 )
                 music = self.spotify.search_for_music(search_term)
 
