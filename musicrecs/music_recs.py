@@ -20,6 +20,7 @@ SNOOZIN_CANNED_EMAIL = "snoozinforabruisin+canned.response@gmail.com"
 
 DICTIONARY_FILE = "musicrecs/random_words/dictionary.txt"
 
+
 class MusicRecs:
     """Music recommendation manager class. Interfaces with
     gmail through snoozingmail to get recommendations from

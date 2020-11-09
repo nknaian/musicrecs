@@ -77,7 +77,9 @@ class Album(Music):
         self._set_album_img(spotify_album, self.IMG_DIMEN)
 
         # Get the release year
-        self.release_year = int(spotify_album["release_date"].split("-")[0])
+        self.release_year = int(
+            spotify_album["release_date"].split("-")[0])
+
 
 class Track(Music):
     """Class to hold selected information about a spotify track."""
@@ -93,4 +95,5 @@ class Track(Music):
         self._set_album_img(spotify_track["album"], self.IMG_DIMEN)
 
         # Get the release year (of the album)
-        self.release_year = int(spotify_track["album"]["release_date"].split("-")[0])
+        self.release_year = int(
+            spotify_track["album"]["release_date"].split("-")[0])
