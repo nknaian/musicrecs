@@ -133,8 +133,12 @@ class Spotify:
             seed_tracks = random.sample(seed_tracks, MAX_REC_SEEDS)
 
         # Get a track rec based on the given seed tracks
-        return self._get_track_rec_from_seeds(
-            human_track_recs, seed_tracks=seed_tracks)
+        track_rec = None
+        while track_rec is None:
+            track_rec = self._get_track_rec_from_seeds(
+                human_track_recs, seed_tracks=seed_tracks)
+
+        return track_rec
 
     def _get_track_rec_from_seeds(self,
                                   human_music_recs,
@@ -154,7 +158,10 @@ class Spotify:
                 self._remove_music_from_list(sp_track_rec.id, sp_track_recs)
 
         # Pick one random track
-        return random.sample(sp_track_recs, 1)[0]
+        if len(sp_track_recs):
+            return random.sample(sp_track_recs, 1)[0]
+        else:
+            return None
 
     def _do_musics_share_artist(self, music1: Music, music2: Music):
         music1_artist_ids = [artist.id for artist in music1.artists]
