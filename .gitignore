@@ -129,9 +129,10 @@ dmypy.json
 .pyre/
 
 # gmail authentication
-*.json
+gmail_creds.json
 *.pickle
 
 # local stuff
 localtools/
 test.py
+*.vscode

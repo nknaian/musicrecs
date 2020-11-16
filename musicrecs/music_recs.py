@@ -19,6 +19,7 @@ SNOOZIN_EMAIL = "snoozinforabruisin@gmail.com"
 SNOOZIN_CANNED_EMAIL = "snoozinforabruisin+canned.response@gmail.com"
 
 DICTIONARY_FILE = "musicrecs/random_words/dictionary.txt"
+REC_HISTORY_FILE = "data/rec_history.json"
 
 
 class MusicRecs:
@@ -171,6 +172,28 @@ class MusicRecs:
 
         self.music_recs[SNOOZIN_EMAIL] = music
 
+    """Function to save info about the musicrecs"""
+
+    def save_musicrecs_to_history(self):
+        rec_history_dict = {}
+
+        # Load the current history
+        with open(REC_HISTORY_FILE, "r") as rec_history_json:
+            rec_history_dict = json.load(rec_history_json)
+
+        # Add the human recs to the history dictionary
+        for participant, music in self.get_human_musicrecs().items():
+            if participant in rec_history_dict:
+                rec_history_dict[participant][self.MUSIC_TYPE].append(music.id)
+            else:
+                recs = {"album": [], "track": []}
+                recs[self.MUSIC_TYPE].append(music.id)
+                rec_history_dict[participant] = recs
+
+        # Put the updated rec history in the json file
+        with open(REC_HISTORY_FILE, "w") as rec_history_json:
+            json.dump(rec_history_dict, rec_history_json)
+
     """Getters"""
 
     def get_shuffled_participants(self):
@@ -181,13 +204,13 @@ class MusicRecs:
             music.format(fmt_type) for music in self._get_shuffled_music()
         ]
 
-    def get_human_participants(self):
+    def get_human_musicrecs(self):
         human_music_recs = copy.deepcopy(self.music_recs)
         if SNOOZIN_EMAIL in human_music_recs:
             human_music_recs.pop(
                 SNOOZIN_EMAIL
             )
-        return list(human_music_recs.keys())
+        return human_music_recs
 
     """Private Functions"""
 

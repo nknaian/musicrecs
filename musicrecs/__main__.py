@@ -24,7 +24,7 @@ def confirm_send(music_recs):
     included in this round. And give user an option to confirm
     or deny that they want to continue.
     """
-    human_participants = music_recs.get_human_participants()
+    human_participants = music_recs.get_human_musicrecs().keys()
 
     print(
         "musicrecs about to be sent to "
@@ -72,6 +72,9 @@ try:
     if args.confirm_send:
         if not confirm_send(music_recs):
             raise Exception("You've decided not to send these recs!")
+
+    # Save the recs to the history data
+    music_recs.save_musicrecs_to_history()
 
     # Send an email to organizer with info about musicrecs
     music_recs.send_musicrecs_info_to_organizer()
