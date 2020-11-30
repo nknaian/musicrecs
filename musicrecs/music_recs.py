@@ -192,7 +192,7 @@ class MusicRecs:
 
         # Put the updated rec history in the json file
         with open(REC_HISTORY_FILE, "w") as rec_history_json:
-            json.dump(rec_history_dict, rec_history_json)
+            json.dump(rec_history_dict, rec_history_json, indent=4)
 
     """Getters"""
 
