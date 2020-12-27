@@ -1,3 +1,5 @@
 Flask
 Flask-sqlalchemy
+Flask-WTF
+Flask-Bootstrap4
 spotipy

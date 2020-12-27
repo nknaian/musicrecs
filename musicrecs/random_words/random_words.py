@@ -3,6 +3,7 @@ import os
 
 DICTIONARY_FILE = os.path.join(os.path.abspath(os.path.dirname(__file__)), "dictionary.txt")
 
+
 class RandomWords:
     def __init__(self):
         with open(DICTIONARY_FILE, 'r') as dictionary:

@@ -12,7 +12,7 @@
   </head>
   <body>
     <nav class="navbar navbar-expand-md navbar-light bg-light">
-        <a class="navbar-brand" href="{{ url_for('index')}}">Home</a>
+        <a class="navbar-brand" href="{{ url_for('index')}}">Musicrecs</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
@@ -24,8 +24,22 @@
             </ul>
         </div>
     </nav>
-    <div class="container">
-        {% block content %} {% endblock %}
+    <div class="container-fluid" style="margin-top: 20px; margin-bottom: 20px;">
+      <!-- Flash messages -->
+      {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+          {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dissmissible fade show" role="alert">
+              <span>{{ message }}</span>
+              <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+              </button>
+            </div>
+          {% endfor %}
+        {% endif %}
+      {% endwith %}
+      <!-- Page content goes here -->
+      {% block content %} {% endblock %}
     </div>
 
     <!-- Optional JavaScript -->

@@ -50,6 +50,9 @@ class Music:
                 f"Unknown format type {fmt_type}. Options are ['text', 'html']"
             )
 
+    def get_artists_comma_separated(self):
+        return ', '.join(artist.name for artist in self.artists)
+
     def get_primary_artist(self):
         return self.artists[0]
 
@@ -60,7 +63,7 @@ class Music:
                 self.img_url = img["url"]
                 break
         if self.img_url is None:
-            print("Error: No matching album image found")
+            raise Exception("Error: No matching album image found")
 
 
 class Album(Music):

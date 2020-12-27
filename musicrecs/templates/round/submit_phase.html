@@ -1,0 +1,18 @@
+{% extends 'round/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block round_nav %}
+    <form
+        method="post"
+        action="{{ url_for('round_advance', long_id=round.long_id)}}"
+        onsubmit="return confirm('Are you sure you want to end the submission phase for all participants?')";>
+        <input class="btn btn-danger" style="white-space: normal;" type="submit" name="advance_to_listen" value="Advance to the listen phase">
+    </form>
+{% endblock %}
+
+{% block round_content %}
+    <div class="bg-light" style="padding: 15px;">
+        <h4>Submit music to the round:</h4>
+        {{ wtf.quick_form(rec_form, method="post", action=url_for('round_submit_rec', long_id=round.long_id)) }}
+    </div>
+{% endblock %}
