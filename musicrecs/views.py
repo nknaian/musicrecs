@@ -23,14 +23,14 @@ from musicrecs.exceptions import UserError, InternalError
 @app.route('/', methods=('GET', 'POST'))
 @app.route('/index', methods=('GET', 'POST'))
 def index():
-    form = NewRoundForm()
+    new_round_form = NewRoundForm()
 
     try:
-        if form.validate_on_submit():
-            # Get the form fields
-            description = form.description.data
-            music_type = form.music_type.data
-            snoozin_rec_type = form.snoozin_rec_type.data
+        if new_round_form.validate_on_submit():
+            # Get the new_round_form fields
+            description = new_round_form.description.data
+            music_type = new_round_form.music_type.data
+            snoozin_rec_type = new_round_form.snoozin_rec_type.data
 
             # Add the round to the database
             new_round = Round(
@@ -45,21 +45,15 @@ def index():
             # Go to the page for the new round
             return redirect(url_for('round', long_id=new_round.long_id))
 
-        elif form.errors:
-            raise InternalError(form.errors)
+        elif new_round_form.errors:
+            raise InternalError(new_round_form.errors)
 
     except UserError as e:
         flash(e, "warning")
     except InternalError as e:
         flash(e, "danger")
 
-    return render_template('index.html', form=form)
-
-
-@app.route('/about')
-def about():
-    # "About" page
-    return render_template('about.html')
+    return render_template('index.html', new_round_form=new_round_form)
 
 
 @app.route('/round/<string:long_id>')
