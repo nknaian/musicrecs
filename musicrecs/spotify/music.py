@@ -27,7 +27,7 @@ class Music:
     def format(self, fmt_type):
         if fmt_type == "text":
             return (f"{self.name} by "
-                    f"{', '.join(artist.name for artist in self.artists)}")
+                    f"{self.get_artists_comma_separated()}")
 
         elif fmt_type == "html":
             img_link = (

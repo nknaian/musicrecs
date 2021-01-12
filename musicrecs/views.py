@@ -140,7 +140,7 @@ def round_submit_rec(long_id):
             spotify_link = rec_form.spotify_link.data
 
             # Verify form info
-            if _spotify_link_invalid(spotify_link, round.music_type):
+            if _spotify_link_invalid(round.music_type, spotify_link):
                 raise UserError(f"Invalid spotify {round.music_type.name} link")
             elif _user_name_taken(user_name, round.submissions):
                 raise UserError(f"The name \"{user_name}\" is taken already for this round!")
@@ -157,7 +157,7 @@ def round_submit_rec(long_id):
             db.session.commit()
 
             # Alert the user that the form was successfully submitted
-            flash("Recommendation successfully submitted!", "success")
+            flash(f"Successfully submitted your recommendation: {_get_music_name_and_artists(round.music_type, spotify_link)}", "success")
 
             # Reload the round page
             return redirect(url_for('round', long_id=long_id))
@@ -169,8 +169,6 @@ def round_submit_rec(long_id):
         flash(e, "warning")
     except InternalError as e:
         flash(e, "danger")
-    except Exception as e:
-        flash(f"Unknown Internal Error: {e}", "danger")
 
     # Retain form entries when there was a mistake in the submission
     return render_template('round/submit_phase.html',
@@ -180,8 +178,15 @@ def round_submit_rec(long_id):
 
 '''PRIVATE FUNCTIONS'''
 
+def _get_music_name_and_artists(music_type: MusicType, spotify_link: str):
+    if not _spotify_link_invalid(music_type, spotify_link):
+        music = spotify_iface.get_music_from_link(music_type.name, spotify_link)
+        return music.format("text")
+    else:
+        return ""
+    
 
-def _spotify_link_invalid(spotify_link: str, music_type: MusicType):
+def _spotify_link_invalid(music_type: MusicType, spotify_link: str):
     try:
         spotify_iface.get_music_from_link(music_type.name, spotify_link)
         return False
