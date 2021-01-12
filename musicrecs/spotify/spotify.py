@@ -24,17 +24,13 @@ class Spotify:
     instance of spotipy.
     """
 
-    def __init__(self, music_type):
+    def __init__(self):
         self.sp = spotipy.Spotify(
             client_credentials_manager=SpotifyClientCredentials())
-        self.MUSIC_TYPE = music_type
-
-        # Only supported music types are 'album' or 'track'
-        assert music_type in ["album", "track"]
 
     """Public Functions"""
 
-    def search_for_music(self, search_term):
+    def search_for_music(self, music_type, search_term):
         """Gets spotify music by searching the search term. Filters
         music out that is below the popularity threshold
         If nothing is found it will return None
@@ -45,12 +41,12 @@ class Spotify:
                 search for music
 
         Return:
-            A `Music` object, or None if nothing was found
+            A spotify link, or None if nothing was found
 
         """
         # Search for the music type using the search term
-        search = self.sp.search(search_term, type=self.MUSIC_TYPE)
-        music_items = search[f'{self.MUSIC_TYPE}s']['items']
+        search = self.sp.search(search_term, type=music_type)
+        music_items = search[f'{music_type}s']['items']
 
         # Go through the music items brought up in the search
         if len(music_items):
@@ -62,40 +58,42 @@ class Spotify:
                 # If the popularity is above the threshold, then return
                 # the item
                 if artists_popularity >= POPULARITY_THRESHOLD:
-                    if self.MUSIC_TYPE == "album":
+                    if music_type == "album":
                         if music_item['album_type'] == "album":
-                            return Album(music_item, search_term)
-                    elif self.MUSIC_TYPE == "track":
+                            return Album(music_item, search_term).link
+                    elif music_type == "track":
                         if music_item['type'] == "track":
-                            return Track(music_item, search_term)
+                            return Track(music_item, search_term).link
         else:
             return None
 
-    def recommend_music(self, human_music_recs: [Music]) -> Music:
-        """Gets a spotify recommendation based on a list of music
-        passed in.
+    def recommend_music(self, music_type, spotify_links):
+        """Gets a spotify recommendation based on a list of spotify
+        links passed in
 
         Args:
             human_music_recs: list of `Music` objects that
                 humans recommended.
 
         Return:
-            A `Music` object
+            A spotify link
         """
         # Assure that we have at least one human music rec
-        assert len(human_music_recs) > 0
+        assert len(spotify_links) > 0
 
-        if self.MUSIC_TYPE == "album":
-            return self._recommend_album(human_music_recs)
-        elif self.MUSIC_TYPE == "track":
-            return self._recommend_track(human_music_recs)
+        music_list = [self.get_music_from_link(music_type, link) for link in spotify_links]
 
-    def get_music_from_link(self, link):
+        if music_type == "album":
+            return self._recommend_album(music_list).link
+        elif music_type == "track":
+            return self._recommend_track(music_list).link
+
+    def get_music_from_link(self, music_type, link):
         """Use spotify link to get `Music` object"""
-        if self.MUSIC_TYPE == "album":
+        if music_type == "album":
             spotify_album = self.sp.album(link)
             return Album(spotify_album)
-        elif self.MUSIC_TYPE == "track":
+        elif music_type == "track":
             spotify_track = self.sp.track(link)
             return Track(spotify_track)
 

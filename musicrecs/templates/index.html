@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+    <div class="bg-light" style="padding: 15px; margin-top: 10px; margin-bottom: 10px;">
+        <h1 class="text-center">Welcome to Musicrecs!</h1>
+        <p class="text-center"> Musicrecs is a platform for sharing spotify music recommendations anonymously with friends.<br>
+        <br>
+        To get started, use the form below to create a new music recommendation round and then share the created round link with others.<br>
+        <br>
+        The recommendation round will have three phases:<br>
+        <i>Submit Phase</i>: Participants submit spotify music links of their recommendations.<br>
+        <i>Listen Phase</i>: Participants listen to the music and consider who may have submitted what.<br>
+        <i>Revealed Phase</i>: It is revealed which participants recommended what.<br>
+        <br>
+        "Snoozin" will automatically send in a recommendation for every round with something he's been listening to lately.
+        </p>
+    </div>
+    <h2>Create a new recommendation round:</h2>
+    {{ wtf.quick_form(form) }}
+{% endblock %}

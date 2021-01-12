@@ -1,14 +1,22 @@
 # musicrecs
-A Gmail-powered Spotify music recommendation exchange platform with snoozin and friends
+A Spotify-powered music recommendation exchange platform with snoozin 'n friends
 
-# setup
-- Clone, create a python 3 venv and install the requirements
-- See https://github.com/nknaian/snoozingmail for Gmail API setup
-- See https://github.com/plamere/spotipy for the Spotify API setup
+# Running locally (ubuntu)
+## Setup
+- Make a spotify developer app through https://developer.spotify.com/
+- Create a python3 virtual environment
+- Install required packages with `pip install -r requirement.txt`
+- install sqlite with `apt-get install sqlite`
+- Create an sqlite database: `sqlite3 databasename.db`
+- Set environment variables:
+    ```bash
+    export SPOTIPY_CLIENT_ID="insert-spotify-client-id-here"
+    export SPOTIPY_CLIENT_SECRET="insert-spotify-client-secret-here"
+    export SQLALCHEMY_DATABASE_URI="sqlite:////insert/database/file/path.db"
+    export FLASK_APP=musicrecs
+    export FLASK_ENV=development
+    ```
 
-# usage
-Run musicrecs as a module:
-```bash
-python -m musicrecs --gmail_creds credentials.json --group_name myfriends --music_type album
-```
-Possible music types are 'album' and 'track'.
+# Run
+- Run `flask run`
+- Open "localhost:5000" in your browser
