@@ -157,7 +157,7 @@ def round_submit_rec(long_id):
             db.session.commit()
 
             # Alert the user that the form was successfully submitted
-            flash("Successfully submitted your recommendation:"
+            flash("Successfully submitted your recommendation: "
                   f"{_get_music_name_and_artists(round.music_type, spotify_link)}",
                   "success")
 
