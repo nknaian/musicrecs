@@ -56,7 +56,7 @@ def index():
     return render_template('index.html', new_round_form=new_round_form)
 
 
-@app.route('/round/<string:long_id>')
+@app.route('/round/<string:long_id>', methods=["GET", "POST"])
 def round(long_id):
     # Get the round from the long id
     round = Round.query.filter_by(long_id=long_id).first()
@@ -157,7 +157,9 @@ def round_submit_rec(long_id):
             db.session.commit()
 
             # Alert the user that the form was successfully submitted
-            flash(f"Successfully submitted your recommendation: {_get_music_name_and_artists(round.music_type, spotify_link)}", "success")
+            flash("Successfully submitted your recommendation:"
+                  f"{_get_music_name_and_artists(round.music_type, spotify_link)}",
+                  "success")
 
             # Reload the round page
             return redirect(url_for('round', long_id=long_id))
@@ -178,13 +180,14 @@ def round_submit_rec(long_id):
 
 '''PRIVATE FUNCTIONS'''
 
+
 def _get_music_name_and_artists(music_type: MusicType, spotify_link: str):
     if not _spotify_link_invalid(music_type, spotify_link):
         music = spotify_iface.get_music_from_link(music_type.name, spotify_link)
         return music.format("text")
     else:
         return ""
-    
+
 
 def _spotify_link_invalid(music_type: MusicType, spotify_link: str):
     try:

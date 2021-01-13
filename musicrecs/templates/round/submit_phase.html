@@ -26,7 +26,7 @@
 
 {% block round_content %}
     <div class="bg-light" style="padding: 15px;">
-        <h4>Submit music to the round:</h4>
+        <h4>Submit music to the round</h4>
         {{ wtf.quick_form(rec_form, method="post", action=url_for('round_submit_rec', long_id=round.long_id)) }}
     </div>
 {% endblock %}
