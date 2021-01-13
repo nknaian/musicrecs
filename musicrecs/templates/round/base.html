@@ -50,24 +50,18 @@
 <!-- 'Share Round Link' popup window-->
 <div id="shareRoundLinkModal" class="modal fade" role="dialog">
     <div class="modal-dialog">
-
         <div class="modal-content">
             <div class="modal-header">
                 <h4 class="modal-title">Share the Round Link</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
             <div class="modal-body">
-                <div class="row">
-                    <div class="col">
-                        <input type="text" value="" id="roundLinkTextbox">
-                    </div>
-                    <div class="col text-right">
-                        <button class="btn btn-primary" style="white-space: normal;" onclick="copyRoundLink()">Copy link to clipboard</button>
-                    </div>
-                </div>
+                <input type="text" style="width: 100%;" value="" id="roundLinkTextbox">
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" style="white-space: normal;" onclick="copyRoundLink()">Copy link to clipboard</button>
             </div>
         </div>
-
     </div>
 </div>
 
