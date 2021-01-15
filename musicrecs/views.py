@@ -14,7 +14,8 @@ from musicrecs import spotify_iface
 from musicrecs.sql_models import Submission, Round
 from musicrecs.forms import NewRoundForm, TrackrecForm, AlbumrecForm
 from musicrecs.enums import RoundStatus, MusicType
-from musicrecs.exceptions import UserError, InternalError
+from musicrecs.exceptions import UserError, InternalError, SpotifyUserNotAuthenticated
+from musicrecs.spotify import spotify_user
 
 
 '''ROUTES'''
@@ -176,6 +177,31 @@ def round_submit_rec(long_id):
     return render_template('round/submit_phase.html',
                            rec_form=rec_form,
                            round=round)
+
+
+@app.route('/sp_login_success')
+def sp_login_success():
+    if request.args.get("code"):
+        spotify_user.auth_new_user(request.args.get("code"))
+    return redirect(url_for('sp'))
+
+
+@app.route('/sp', methods=["GET", "POST"])
+def sp():
+    if 'sp_current_track' in request.form:
+        try:
+            print(spotify_user.get_current_track())
+        except SpotifyUserNotAuthenticated as e:
+            return redirect(e.get_auth_url())
+    elif 'sp_signout' in request.form:
+        return redirect(spotify_user.not_you())
+
+    try:
+        display_name = spotify_user.get_user_display_name()
+    except SpotifyUserNotAuthenticated:
+        display_name = None
+
+    return render_template('sp/sp.html', display_name=display_name)
 
 
 '''PRIVATE FUNCTIONS'''

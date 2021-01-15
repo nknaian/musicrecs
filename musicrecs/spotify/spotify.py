@@ -1,3 +1,11 @@
+"""Spotify interface class that uses the spotipy client
+credentials authentication method. This class can be used
+to interface with spotify for use cases that don't require
+access to individual user accounts. So, things like searching
+for music, or getting information about music based on a
+spotify link.
+"""
+
 import random
 import copy
 
@@ -21,7 +29,7 @@ MAX_REC_SEEDS = 5
 
 class Spotify:
     """Class to interface with Spotify API through an
-    instance of spotipy.
+    instance of client credentials authenticated spotipy.
     """
 
     def __init__(self):

@@ -1,0 +1,23 @@
+{% extends 'base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block content %}
+
+<div>
+    <form
+        method="post"
+        action="{{ url_for('sp')}}">
+        <input class="btn btn-primary" style="white-space: normal;" type="submit" name="sp_current_track" value="Get current track">
+    </form>
+</div>
+
+<div style="margin-top: 100px;">
+    {{display_name}}
+    <form
+        method="post"
+        action="{{ url_for('sp')}}">
+        <input class="btn btn-danger" style="white-space: normal;" type="submit" name="sp_signout" value="Not You?">
+    </form>
+</div>
+
+{% endblock %}
