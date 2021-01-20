@@ -81,10 +81,15 @@ def round(long_id):
                 round.music_type.name, submission.spotify_link
             ) for submission in submission_list
         }
+        if round.snoozin_rec_type == 0:
+            snoozinrt = 'Random'
+        else:
+            snoozinrt = 'Similar'
         return render_template('round/listen_phase.html',
                                music_submissions=music_submissions,
                                round=round,
-                               revealed=RoundStatus.revealed)
+                               revealed=RoundStatus.revealed,
+                               snoozin_rt=snoozinrt)
 
 
 @app.route('/round/<string:long_id>/advance', methods=['POST'])
