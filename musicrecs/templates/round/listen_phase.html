@@ -14,10 +14,6 @@
 
 {% block round_content %}
     <div class="bg-light" style="padding: 15px;">
-        <h4> Snoozin' recommendation type </h4>
-        <div class="row bg-dark text-light" style="padding: 10px; margin-top: 10px; margin-bottom: 10px; margin-left: 10px; margin-right: 10px; display: inline-block;">
-            <b> {{snoozin_rt}} </b>
-        </div>
         <h4> The {{round.music_type.name}}s:</h4>
         {% for recommender, music in music_submissions.items() %}
             <a href="{{music.link}}">
