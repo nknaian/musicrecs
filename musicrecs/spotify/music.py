@@ -24,32 +24,6 @@ class Music:
         # Set search term that was used to get music
         self.search_term = search_term
 
-    def format(self, fmt_type):
-        if fmt_type == "text":
-            return (f"{self.name} by "
-                    f"{self.get_artists_comma_separated()}")
-
-        elif fmt_type == "html":
-            img_link = (
-                f"<a href='{self.link}'>"
-                f"<img src='{self.img_url}'"
-                f"alt='{self.name}"
-                f"style='width:{self.IMG_DIMEN}px;"
-                f"height:{self.IMG_DIMEN}px;"
-                "border:0;'>"
-                "</a>"
-            )
-
-            return (
-                f"<b>{self.name}</b> by "
-                f"{', '.join(artist.name for artist in self.artists)}<br>"
-                f"{img_link}"
-            )
-        else:
-            raise Exception(
-                f"Unknown format type {fmt_type}. Options are ['text', 'html']"
-            )
-
     def get_artists_comma_separated(self):
         return ', '.join(artist.name for artist in self.artists)
 
@@ -64,6 +38,10 @@ class Music:
                 break
         if self.img_url is None:
             raise Exception("Error: No matching album image found")
+
+    def __str__(self) -> str:
+        return (f"{self.name} by "
+                f"{self.get_artists_comma_separated()}")
 
 
 class Album(Music):

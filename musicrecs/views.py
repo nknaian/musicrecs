@@ -158,7 +158,7 @@ def round_submit_rec(long_id):
 
             # Alert the user that the form was successfully submitted
             flash("Successfully submitted your recommendation: "
-                  f"{_get_music_name_and_artists(round.music_type, spotify_link)}",
+                  f"{spotify_iface.get_music_from_link(round.music_type.name, spotify_link)}",
                   "success")
 
             # Reload the round page
@@ -184,7 +184,7 @@ def round_submit_rec(long_id):
 def _get_music_name_and_artists(music_type: MusicType, spotify_link: str):
     if not _spotify_link_invalid(music_type, spotify_link):
         music = spotify_iface.get_music_from_link(music_type.name, spotify_link)
-        return music.format("text")
+        return music
     else:
         return ""
 
