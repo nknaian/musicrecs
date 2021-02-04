@@ -13,8 +13,36 @@
 {% endblock %}
 
 {% block round_content %}
-    <div class="bg-light" style="padding: 15px;">
-        <h4> The {{round.music_type.name}}s:</h4>
+        {% if playlist %}
+            <div class="bg-light" style="padding: 15px; margin-top: 10px; margin-bottom: 10px;">
+                <h4>The playlist</h4>
+                <a href="{{playlist.link}}">
+                    <div class="row bg-dark text-light" style="padding: 10px; margin-top: 10px; margin-bottom: 10px; margin-left: 10px; margin-right: 10px; display: inline-block;">
+                        <div class="row">
+                            {%if playlist.img_url %}
+                                <div class="col col-auto">
+                                    <img src="{{playlist.img_url}}"
+                                        alt="{{playlist.name}}"
+                                        style="width: {{playlist.IMG_DIMEN}}px; height:{{playlist.IMG_DIMEN}}px; border:0;">
+                                </div>
+                            {% endif %}
+                            <div class="col" style="min-width: 200px">
+                                <span class="align-middle">{{playlist.name}}</span>
+                            </div>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        {% elif playlist_form %}
+            <div class="bg-light" style="padding: 15px; margin-top: 10px; margin-bottom: 10px;">
+                <h4>Create a playlist for this round</h4>
+                {{ wtf.quick_form(playlist_form, method="post", action=url_for('round_create_playlist', long_id=round.long_id)) }}
+            </div>
+        {% endif %}
+    </div>
+
+    <div class="bg-light" style="padding: 15px; margin-top: 10px; margin-bottom: 10px;">
+        <h4> The {{round.music_type.name}}s</h4>
         {% for recommender, music in music_submissions.items() %}
             <a href="{{music.link}}">
                 <div class="row bg-dark text-light" style="padding: 10px; margin-top: 10px; margin-bottom: 10px; margin-left: 10px; margin-right: 10px; display: inline-block;">

@@ -21,5 +21,3 @@ class SpotifyItem():
             if img["height"] == self.IMG_DIMEN and img["width"] == self.IMG_DIMEN:
                 self.img_url = img["url"]
                 break
-        if self.img_url is None:
-            raise Exception("Error: No matching image found")

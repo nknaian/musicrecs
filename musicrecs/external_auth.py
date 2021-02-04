@@ -35,6 +35,7 @@ These are the routes that will be called after external authorization
 is complete.
 """
 
+
 @app.route('/sp_login_success')
 def sp_login_success():
     """Callback route for spotify authorization"""
@@ -44,7 +45,10 @@ def sp_login_success():
         spotify_user.auth_new_user(request.args.get("code"))
 
         # Redirect to the recovered url
-        flash(f"Hello {spotify_user.get_user_display_name()}, you have successfully connected your Spotify account.", "success")
+        flash(
+            f"Hello {spotify_user.get_user_display_name()}, you have successfully connected your Spotify account.",
+            "success"
+        )
         return redirect(_get_external_auth_url())
     # User didn't log in
     else:
@@ -55,9 +59,9 @@ def sp_login_success():
 """DECORATORS"""
 
 
-def recover_after_auth(foo):
+def recover_after_auth():
     """A decorator to recover a user POST action after an external auth
-    
+
     This decorator can be applied to a flask form submission route
     that involves an action that requires external authentication. It
     will recover the route the user was executing and the form data
@@ -79,7 +83,7 @@ def recover_after_auth(foo):
             if external_auth_form_data:
                 kwargs["recovered_form_data"] = external_auth_form_data
                 session.pop("external_auth_form_data", None)
-            # 
+            # Run the wrapped function
             try:
                 ret = func(*args, **kwargs)
             # Save pre-authentication information and redirect to
@@ -92,7 +96,6 @@ def recover_after_auth(foo):
             return ret
         return decorated_function
     return decorator
-
 
 
 def _get_external_auth_url():

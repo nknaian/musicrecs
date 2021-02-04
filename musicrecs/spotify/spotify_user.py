@@ -10,6 +10,7 @@ url and then direct back towards what the user was trying to do.
 """
 
 import os
+from typing import List
 import uuid
 
 import spotipy
@@ -20,14 +21,15 @@ from flask import session
 from musicrecs.exceptions import ExternalAuthFailure
 
 from .item.spotify_music import SpotifyTrack
+from .item.spotify_playlist import SpotifyPlaylist
 
 
 '''CONSTANTS'''
 
 
-SCOPE = 'user-read-currently-playing playlist-modify-private'
+SCOPE = 'playlist-modify-public'
 CACHE_FOLDER = '.spotify_user_caches/'
-
+MAX_PLAYLIST_NAME_LENGTH = 100
 
 '''PUBLIC AUTH FUNCTIONS'''
 
@@ -77,6 +79,54 @@ def get_current_track():
 
 def get_user_display_name():
     return _get_sp_instance().me()['display_name']
+
+
+def get_user_playlists():
+    sp = _get_sp_instance()
+
+    playlist_infos = sp.current_user_playlists()
+
+    playlists = []
+    while playlist_infos:
+        for playlist in playlist_infos['items']:
+            playlists.append(playlist)
+        if playlist_infos['next']:
+            playlist_infos = sp.next(playlist_infos)
+        else:
+            playlist_infos = None
+
+    return playlists
+
+
+def create_playlist(name: str, tracks: List[SpotifyTrack]) -> SpotifyPlaylist:
+    """Create a playlist of the passed in tracks with the given name
+
+    It will return the spotify link of the created playlist.
+    """
+    # Get the spotify user account instance
+    sp = _get_sp_instance()
+
+    # Get the current user's id
+    user_id = sp.current_user()["id"]
+
+    # If the name is too long, only use the first MAX_PLAYLIST_NAME_LENGTH chars
+    # TODO: It would be nice to give the user an alert abou
+    if len(name) > MAX_PLAYLIST_NAME_LENGTH:
+        name = name[:MAX_PLAYLIST_NAME_LENGTH]
+
+    # Create the playlist with the given name, for the current user.
+    sp.user_playlist_create(user_id, name)
+
+    # Make a playlist object for the playlist that was just created
+    new_playlist = SpotifyPlaylist(sp.current_user_playlists()['items'][0])
+
+    # Add the given tracks to the new playlist
+    sp.user_playlist_add_tracks(user_id,
+                                new_playlist.id,
+                                [track.id for track in tracks])
+
+    # Return the new playlist
+    return new_playlist
 
 
 '''PRIVATE FUNCTIONS'''
