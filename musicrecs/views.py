@@ -189,14 +189,6 @@ def sp_login_success():
 '''PRIVATE FUNCTIONS'''
 
 
-def _get_music_name_and_artists(music_type: MusicType, spotify_link: str):
-    if not _spotify_link_invalid(music_type, spotify_link):
-        music = spotify_iface.get_music_from_link(music_type.name, spotify_link)
-        return music
-    else:
-        return ""
-
-
 def _spotify_link_invalid(music_type: MusicType, spotify_link: str):
     try:
         spotify_iface.get_music_from_link(music_type.name, spotify_link)

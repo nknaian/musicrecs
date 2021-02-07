@@ -8,11 +8,12 @@ spotify link.
 
 import random
 import copy
+from typing import List
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
-from .music import Music, Album, Track
+from .item.spotify_music import SpotifyMusic, SpotifyAlbum, SpotifyTrack
 
 """Popularity is a number that spotify
 assigns to music based on how many listens it's
@@ -68,10 +69,10 @@ class Spotify:
                 if artists_popularity >= POPULARITY_THRESHOLD:
                     if music_type == "album":
                         if music_item['album_type'] == "album":
-                            return Album(music_item, search_term).link
+                            return SpotifyAlbum(music_item).link
                     elif music_type == "track":
                         if music_item['type'] == "track":
-                            return Track(music_item, search_term).link
+                            return SpotifyTrack(music_item).link
         else:
             return None
 
@@ -80,7 +81,7 @@ class Spotify:
         links passed in
 
         Args:
-            human_music_recs: list of `Music` objects that
+            human_music_recs: list of `SpotifyMusic` objects that
                 humans recommended.
 
         Return:
@@ -97,17 +98,17 @@ class Spotify:
             return self._recommend_track(music_list).link
 
     def get_music_from_link(self, music_type, link):
-        """Use spotify link to get `Music` object"""
+        """Use spotify link to get `SpotifyMusic` object"""
         if music_type == "album":
             spotify_album = self.sp.album(link)
-            return Album(spotify_album)
+            return SpotifyAlbum(spotify_album)
         elif music_type == "track":
             spotify_track = self.sp.track(link)
-            return Track(spotify_track)
+            return SpotifyTrack(spotify_track)
 
     """Private Functions"""
 
-    def _recommend_album(self, human_album_recs: [Album]) -> Album:
+    def _recommend_album(self, human_album_recs: List[SpotifyAlbum]) -> SpotifyAlbum:
         # Get artist seeds from the album list passed in
         seed_artists = [album.get_primary_artist().id
                         for album in human_album_recs]
@@ -127,11 +128,11 @@ class Spotify:
             )['items']
             if len(artist_album_items):
                 # Pick a random album from the artist's discography
-                album_rec = Album(random.sample(artist_album_items, 1)[0])
+                album_rec = SpotifyAlbum(random.sample(artist_album_items, 1)[0])
 
         return album_rec
 
-    def _recommend_track(self, human_track_recs: [Track]) -> Track:
+    def _recommend_track(self, human_track_recs: List[SpotifyTrack]) -> SpotifyTrack:
         # Get the track seeds from the track list passed in (spotipy accepts
         # ids as one of the options for track seeds)
         seed_tracks = [track.id for track in human_track_recs]
@@ -147,13 +148,13 @@ class Spotify:
         return track_rec
 
     def _get_track_rec_from_seeds(self,
-                                  human_music_recs,
+                                  human_music_recs: List[SpotifyMusic],
                                   seed_tracks=None,
                                   seed_artists=None):
         track_items = self.sp.recommendations(
             seed_tracks=seed_tracks, seed_artists=seed_artists
         )["tracks"]
-        sp_track_recs = [Track(track_item) for track_item in track_items]
+        sp_track_recs = [SpotifyTrack(track_item) for track_item in track_items]
 
         # Remove any track that shares an artist with one of the human
         # music recs
@@ -169,7 +170,7 @@ class Spotify:
         else:
             return None
 
-    def _do_musics_share_artist(self, music1: Music, music2: Music):
+    def _do_musics_share_artist(self, music1: SpotifyMusic, music2: SpotifyMusic):
         music1_artist_ids = [artist.id for artist in music1.artists]
         music2_artist_ids = [artist.id for artist in music2.artists]
 
@@ -177,7 +178,7 @@ class Spotify:
 
         return bool(common_ids)
 
-    def _remove_music_from_list(self, music_id: str, music_list: [Music]):
+    def _remove_music_from_list(self, music_id: str, music_list: List[SpotifyMusic]):
         for music in music_list:
             if music_id == music.id:
                 music_list.remove(music)

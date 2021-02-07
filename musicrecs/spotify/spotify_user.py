@@ -19,7 +19,7 @@ from flask import session
 
 from musicrecs.exceptions import SpotifyUserNotAuthenticated
 
-from .music import Track
+from .item.spotify_music import SpotifyTrack
 
 
 '''CONSTANTS'''
@@ -53,7 +53,7 @@ def get_current_track():
     """
     track_info = _get_sp_instance().current_user_playing_track()
     if track_info is not None:
-        return Track(track_info['item'])
+        return SpotifyTrack(track_info['item'])
     return "No track currently playing."
 
 
