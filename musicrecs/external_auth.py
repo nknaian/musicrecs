@@ -36,8 +36,8 @@ is complete.
 """
 
 
-@app.route('/sp_login_success')
-def sp_login_success():
+@app.route('/sp_auth_complete')
+def sp_auth_complete():
     """Callback route for spotify authorization"""
     # User logged in
     if request.args.get("code"):
