@@ -1,5 +1,5 @@
 # musicrecs
-A Spotify-powered music recommendation exchange web platform with snoozin 'n friends
+A Spotify-powered music recommendation game with snoozin 'n friends
 
 # Running locally
 ## Requirements
