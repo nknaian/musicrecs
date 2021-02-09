@@ -16,7 +16,7 @@ class InternalError(AssertionError):
         return f"Internal Error: {self.message}"
 
 
-class SpotifyUserNotAuthenticated(Exception):
+class ExternalAuthFailure(Exception):
     def __init__(self, auth_url) -> None:
         self.auth_url = auth_url
 

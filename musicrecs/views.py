@@ -179,13 +179,6 @@ def round_submit_rec(long_id):
                            round=round)
 
 
-@app.route('/sp_login_success')
-def sp_login_success():
-    if request.args.get("code"):
-        spotify_user.auth_new_user(request.args.get("code"))
-    return redirect(url_for('sp'))
-
-
 '''PRIVATE FUNCTIONS'''
 
 

@@ -2,7 +2,7 @@
 account, using the spotipy authorization code flow.
 
 If a function is called that requires user authentication, then
-the 'SpotifyUserNotAuthenticated' exception shall be raised, containing
+the 'ExternalAuthFailure' exception shall be raised, containing
 the authorization url that should be visited to log the user in
 to spotify and authorize the musicrecs app. It is the caller's
 responsibility to catch this exception and redirect to the authorization
@@ -17,7 +17,7 @@ from spotipy.oauth2 import SpotifyOAuth
 
 from flask import session
 
-from musicrecs.exceptions import SpotifyUserNotAuthenticated
+from musicrecs.exceptions import ExternalAuthFailure
 
 from .item.spotify_music import SpotifyTrack
 
@@ -29,7 +29,7 @@ SCOPE = 'user-read-currently-playing playlist-modify-private'
 CACHE_FOLDER = '.spotify_user_caches/'
 
 
-'''PUBLIC FUNCTIONS'''
+'''PUBLIC AUTH FUNCTIONS'''
 
 
 def get_auth_url(show_dialog=False):
@@ -45,22 +45,6 @@ def auth_new_user(code):
     _get_auth_manager().get_access_token(code)
 
 
-def get_current_track():
-    """Return information about the track the user is currently playing
-
-    If the current user is not authenticated, then a
-    'SpotifyUserNotAuthenticated' exception will be raised.
-    """
-    track_info = _get_sp_instance().current_user_playing_track()
-    if track_info is not None:
-        return SpotifyTrack(track_info['item'])
-    return "No track currently playing."
-
-
-def get_user_display_name():
-    return _get_sp_instance().me()['display_name']
-
-
 def not_you():
     """A bit of a hacky solution, but the best simple one that
     seems available. This function will remove the session and
@@ -74,6 +58,25 @@ def not_you():
         os.remove(_session_cache_path())
         session.clear()
     return get_auth_url(show_dialog=True)
+
+
+'''PUBLIC FUNCTIONS'''
+
+
+def get_current_track():
+    """Return information about the track the user is currently playing
+
+    If the current user is not authenticated, then a
+    'ExternalAuthFailure' exception will be raised.
+    """
+    track_info = _get_sp_instance().current_user_playing_track()
+    if track_info is not None:
+        return SpotifyTrack(track_info['item'])
+    return "No track currently playing."
+
+
+def get_user_display_name():
+    return _get_sp_instance().me()['display_name']
 
 
 '''PRIVATE FUNCTIONS'''
@@ -100,7 +103,7 @@ def _get_sp_instance():
     if auth_manager.get_cached_token():
         return spotipy.Spotify(auth_manager=auth_manager)
     else:
-        raise SpotifyUserNotAuthenticated(get_auth_url())
+        raise ExternalAuthFailure(get_auth_url())
 
 
 def _get_auth_manager(show_dialog=False):
