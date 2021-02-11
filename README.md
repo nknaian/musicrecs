@@ -9,7 +9,7 @@ A Spotify-powered music recommendation game with snoozin 'n friends
 ## Setup
 - Make a spotify developer app through "https://developer.spotify.com/dashboard"
     - note the client id and client secret for your new app
-- install sqlite with `apt-get install sqlite`
+- install sqlite with `apt-get install sqlite3`
 - Create a python3 virtual environment `python3 -m venv name-of-venv`
 - Activate your virtual environment `source path-to-venv/bin/activate`
 - Install required packages with `pip install -r requirements.txt`
