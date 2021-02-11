@@ -25,6 +25,7 @@ A Spotify-powered music recommendation game with snoozin 'n friends
     ```bash
     export SPOTIPY_CLIENT_ID="insert-spotify-client-id-here"
     export SPOTIPY_CLIENT_SECRET="insert-spotify-client-secret-here"
+    export SPOTIPY_REDIRECT_URI="http://localhost:5000/sp_auth_complete"
     export SQLALCHEMY_DATABASE_URI="sqlite:////insert/database/file/path.db"
     export FLASK_SECRET_KEY="insert-your-secret-key"
     export FLASK_APP=musicrecs
