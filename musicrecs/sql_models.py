@@ -31,6 +31,7 @@ class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     spotify_link = db.Column(db.String(MAX_SPOTIFY_LINK_LENGTH), nullable=False)
     user_name = db.Column(db.String(MAX_USERNAME_LENGTH))
+    shuffled_pos = db.Column(db.Integer)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     round_id = db.Column(db.Integer, db.ForeignKey('round.id'), nullable=False)

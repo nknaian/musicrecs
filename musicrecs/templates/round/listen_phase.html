@@ -43,7 +43,7 @@
 
     <div class="bg-light" style="padding: 15px; margin-top: 10px; margin-bottom: 10px;">
         <h4> The {{round.music_type.name}}s</h4>
-        {% for recommender, music in music_submissions.items() %}
+        {% for user_name, music in music_submissions %}
             <a href="{{music.link}}">
                 <div class="row bg-dark text-light" style="padding: 10px; margin-top: 10px; margin-bottom: 10px; margin-left: 10px; margin-right: 10px; display: inline-block;">
                     <div class="row">
@@ -57,7 +57,7 @@
                         </div>
                     </div>
                     {% if round.status ==  revealed %}
-                        <div class="align-bottom text-right font-italic">recommended by {{recommender}}</div>
+                        <div class="align-bottom text-right font-italic">recommended by {{user_name}}</div>
                     {% endif %}
                 </div>
             </a>

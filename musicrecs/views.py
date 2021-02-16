@@ -1,6 +1,6 @@
 import random
 import secrets
-from copy import deepcopy
+from typing import List, Tuple
 
 from flask import render_template, redirect, url_for, flash
 from flask.globals import request
@@ -16,6 +16,7 @@ from musicrecs.enums import RoundStatus, MusicType, SnoozinRecType
 from musicrecs.exceptions import UserError, InternalError
 from musicrecs.spotify import spotify_user
 from musicrecs import external_auth
+from musicrecs.spotify.item.spotify_music import SpotifyMusic
 
 
 '''ROUTES'''
@@ -78,19 +79,6 @@ def round(long_id):
                                rec_form=rec_form,
                                round=round)
     elif round.status == RoundStatus.listen or round.status == RoundStatus.revealed:
-        # Get the sumbissions
-        # TODO: refactor this...
-        # 1. I'd like to relegate the getting of the dictionary to a private fn.
-        # 2. It would be nice if we could just shuffle the list once at the beginning
-        #    of the round and never shuffle it again.
-        submission_list = deepcopy(round.submissions)
-        random.shuffle(submission_list)
-        music_submissions = {
-            submission.user_name: spotify_iface.get_music_from_link(
-                round.music_type, submission.spotify_link
-            ) for submission in submission_list
-        }
-
         # Get the playlist
         if round.playlist_link:
             playlist = spotify_iface.get_playlist_from_link(round.playlist_link)
@@ -98,11 +86,11 @@ def round(long_id):
             playlist = None
 
         return render_template('round/listen_phase.html',
-                               music_submissions=music_submissions,
                                round=round,
-                               revealed=RoundStatus.revealed,
+                               music_submissions=_get_shuffled_music_submissions(round),
                                playlist_form=playlist_form,
-                               playlist=playlist)
+                               playlist=playlist,
+                               revealed=RoundStatus.revealed)
 
 
 @app.route('/round/<string:long_id>/advance', methods=['POST'])
@@ -160,7 +148,7 @@ def round_submit_rec(long_id):
             # Verify form info
             if spotify_iface.spotify_link_invalid(round.music_type, spotify_link):
                 raise UserError(f"Invalid spotify {round.music_type.name} link")
-            elif _user_name_taken(user_name, round.submissions):
+            elif _user_name_taken(round, user_name):
                 raise UserError(f"The name \"{user_name}\" is taken already for this round!")
             elif user_name == "snoozin":
                 raise UserError("This town's only big enough for one snoozin...")
@@ -216,8 +204,8 @@ def round_create_playlist(long_id, recovered_form_data=None):
     if playlist_form.validate():
         playlist_name = playlist_form.playlist_name.data
 
-        # Get a list of the tracks in the round
-        tracks = _get_submitted_music_list(round)
+        # Get a list of the tracks in the round (in the 'shuffled' order)
+        tracks = [track for _, track in _get_shuffled_music_submissions(round)]
 
         # Make the playlist
         new_playlist = spotify_user.create_playlist(playlist_name, tracks)
@@ -234,15 +222,15 @@ def round_create_playlist(long_id, recovered_form_data=None):
 '''PRIVATE FUNCTIONS'''
 
 
-def _user_name_taken(user_name, submissions):
-    for submission in submissions:
+def _user_name_taken(round: Round, user_name: str) -> bool:
+    for submission in round.submissions:
         if submission.user_name == user_name:
             return True
     return False
 
 
 # TODO: maybe we need to put in a max number of search attempts for buggy situations...
-def _get_snoozin_rec(round):
+def _get_snoozin_rec(round: Round):
     snoozin_rec = None
     if round.snoozin_rec_type == SnoozinRecType.random:
         rw_gen = random_words.RandomWords()
@@ -260,16 +248,70 @@ def _get_snoozin_rec(round):
         db.session.commit()
 
     elif round.snoozin_rec_type == SnoozinRecType.similar:
-        snoozin_rec = spotify_iface.recommend_music(round.music_type, _get_submitted_music_list(round))
+        snoozin_rec = spotify_iface.recommend_music(round.music_type, _get_music_list(round))
     else:
         raise InternalError("Unknown Snoozin rec type")
 
     return snoozin_rec
 
 
-def _get_submitted_music_list(round):
+def _get_music_list(round: Round) -> List[SpotifyMusic]:
+    """Get a list of the music in the round in the order it was submitted"""
     return [
         spotify_iface.get_music_from_link(
             round.music_type, submission.spotify_link
         ) for submission in round.submissions
     ]
+
+
+def _get_shuffled_music_submissions(round: Round) -> List[Tuple[str, SpotifyMusic]]:
+    """Get a shuffled list of tuples of the username paired with
+    the music they submitted for the round
+    """
+    # Make a list large enough to hold the submissions
+    shuffled_music_submissions = [None] * len(round.submissions)
+
+    # Shuffle the submissions if they haven't been already
+    _shuffle_music_submissions(round)
+
+    # Add a tuple of user_name and music at the 'shuffled position' of the new list
+    for submission in round.submissions:
+        shuffled_music_submissions[submission.shuffled_pos] = (
+            submission.user_name,
+            spotify_iface.get_music_from_link(round.music_type, submission.spotify_link)
+        )
+
+    # Make sure that every spot in the list was filled
+    assert all(shuffled_music_submissions)
+
+    return shuffled_music_submissions
+
+
+def _shuffle_music_submissions(round: Round, reshuffle=False):
+    """Shuffle the submissions in the round by storing a random
+    'shuffled_pos' in each db entry.
+
+    By default, this will have no effect if the submissions have
+    already been shuffled, but that behavior can be overridden by
+    passing `reshuffle=True`.
+    """
+    # Bail if we've already shuffled it `reshuffle` was not specified
+    if (round.submissions[0].shuffled_pos is not None) and (not reshuffle):
+        return
+
+    # Create a random order on integers from 0 to the number of submissions
+    # Ex for 6 submissions: `[4, 3, 5, 0, 1, 2]` (first submitted should be
+    # shuffled to the fourth spot, second submitted should be shuffled to
+    # the third spot etc.)
+    rand_order = list(range(len(round.submissions)))
+    random.shuffle(rand_order)
+
+    # Assign each submission a 'shuffled position' using the `rand_order`
+    for submission, rand_num in zip(
+        round.submissions,
+        rand_order
+    ):
+        submission.shuffled_pos = rand_num
+
+    # commit the shuffled possitions to the database
+    db.session.commit()
