@@ -11,7 +11,7 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
         <!-- Musicrecs CSS -->
-        <link rel="stylesheet" href="/musicrecs/templates/style.css">
+        <link rel="stylesheet" href="../static/style.css">
 
         <title>{% block title %} {% endblock %}</title>
     </head>
@@ -32,10 +32,10 @@
                 </ul>
             </div>
         </nav>
-        <div class="container-fluid">
+        <div class="container-fluid" style="margin-top: 20px; margin-bottom: 20px;">
             <!-- Loading content goes here -->
-            <div id="loading">
-                <div ></div>
+            <div id="loading" style="display: none; cursor: wait;">
+                <div style="margin-left: 50%; margin-top: 20px; width: 35px; height: 35px; background: url(/static/loadingimage.gif) no-repeat;"></div>
             </div>
 
             <!-- Content goes here -->
