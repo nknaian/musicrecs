@@ -1,10 +1,22 @@
+"""Spotify interface class that uses the spotipy client
+credentials authentication method. This class can be used
+to interface with spotify for use cases that don't require
+access to individual user accounts. So, things like searching
+for music, or getting information about music based on a
+spotify link.
+"""
+
 import random
 import copy
+from typing import List, Optional
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
+from spotipy.exceptions import SpotifyException
 
-from .music import Music, Album, Track
+from .item.spotify_music import SpotifyMusic, SpotifyAlbum, SpotifyTrack
+from .item.spotify_playlist import SpotifyPlaylist
+from musicrecs.enums import MusicType
 
 """Popularity is a number that spotify
 assigns to music based on how many listens it's
@@ -21,7 +33,7 @@ MAX_REC_SEEDS = 5
 
 class Spotify:
     """Class to interface with Spotify API through an
-    instance of spotipy.
+    instance of client credentials authenticated spotipy.
     """
 
     def __init__(self):
@@ -30,23 +42,15 @@ class Spotify:
 
     """Public Functions"""
 
-    def search_for_music(self, music_type, search_term):
+    def search_for_music(self, music_type: MusicType, search_term: str) -> Optional[SpotifyMusic]:
         """Gets spotify music by searching the search term. Filters
-        music out that is below the popularity threshold
+        music out that is below the popularity threshold.
+
         If nothing is found it will return None
-
-        Args:
-            type: Type of music object. Either album or track
-            search_term: A string containing the word/s to be
-                search for music
-
-        Return:
-            A spotify link, or None if nothing was found
-
         """
         # Search for the music type using the search term
-        search = self.sp.search(search_term, type=music_type)
-        music_items = search[f'{music_type}s']['items']
+        search = self.sp.search(search_term, type=music_type.name)
+        music_items = search[f'{music_type.name}s']['items']
 
         # Go through the music items brought up in the search
         if len(music_items):
@@ -58,48 +62,52 @@ class Spotify:
                 # If the popularity is above the threshold, then return
                 # the item
                 if artists_popularity >= POPULARITY_THRESHOLD:
-                    if music_type == "album":
+                    if music_type == MusicType.album:
                         if music_item['album_type'] == "album":
-                            return Album(music_item, search_term).link
-                    elif music_type == "track":
+                            return SpotifyAlbum(music_item)
+                    elif music_type == MusicType.track:
                         if music_item['type'] == "track":
-                            return Track(music_item, search_term).link
+                            return SpotifyTrack(music_item)
         else:
             return None
 
-    def recommend_music(self, music_type, spotify_links):
-        """Gets a spotify recommendation based on a list of spotify
-        links passed in
-
-        Args:
-            human_music_recs: list of `Music` objects that
-                humans recommended.
-
-        Return:
-            A spotify link
+    def recommend_music(self, music_type: MusicType, music_list: List[SpotifyMusic]) -> SpotifyMusic:
+        """Gets a spotify recommendation based on a list of spotify music
+        passed in.
         """
         # Assure that we have at least one human music rec
-        assert len(spotify_links) > 0
+        assert len(music_list) > 0
 
-        music_list = [self.get_music_from_link(music_type, link) for link in spotify_links]
-
-        if music_type == "album":
-            return self._recommend_album(music_list).link
-        elif music_type == "track":
-            return self._recommend_track(music_list).link
+        if music_type == MusicType.album:
+            return self._recommend_album(music_list)
+        elif music_type == MusicType.track:
+            return self._recommend_track(music_list)
 
     def get_music_from_link(self, music_type, link):
-        """Use spotify link to get `Music` object"""
-        if music_type == "album":
+        """Use spotify link to get `SpotifyMusic` object"""
+        if music_type == MusicType.album:
             spotify_album = self.sp.album(link)
-            return Album(spotify_album)
-        elif music_type == "track":
+            return SpotifyAlbum(spotify_album)
+        elif music_type == MusicType.track:
             spotify_track = self.sp.track(link)
-            return Track(spotify_track)
+            return SpotifyTrack(spotify_track)
+
+    def get_playlist_from_link(self, link):
+        """Use spotify playlist link to get `SpotifyPlaylist` object"""
+        spotify_playlist = self.sp.playlist(link)
+        return SpotifyPlaylist(spotify_playlist)
+
+    def spotify_link_invalid(self, music_type: MusicType, spotify_link: str):
+        """Check whether the given spotify link is a valid 'music type' link"""
+        try:
+            self.get_music_from_link(music_type, spotify_link)
+            return False
+        except SpotifyException:
+            return True
 
     """Private Functions"""
 
-    def _recommend_album(self, human_album_recs: [Album]) -> Album:
+    def _recommend_album(self, human_album_recs: List[SpotifyAlbum]) -> SpotifyAlbum:
         # Get artist seeds from the album list passed in
         seed_artists = [album.get_primary_artist().id
                         for album in human_album_recs]
@@ -119,11 +127,11 @@ class Spotify:
             )['items']
             if len(artist_album_items):
                 # Pick a random album from the artist's discography
-                album_rec = Album(random.sample(artist_album_items, 1)[0])
+                album_rec = SpotifyAlbum(random.sample(artist_album_items, 1)[0])
 
         return album_rec
 
-    def _recommend_track(self, human_track_recs: [Track]) -> Track:
+    def _recommend_track(self, human_track_recs: List[SpotifyTrack]) -> SpotifyTrack:
         # Get the track seeds from the track list passed in (spotipy accepts
         # ids as one of the options for track seeds)
         seed_tracks = [track.id for track in human_track_recs]
@@ -139,13 +147,13 @@ class Spotify:
         return track_rec
 
     def _get_track_rec_from_seeds(self,
-                                  human_music_recs,
+                                  human_music_recs: List[SpotifyMusic],
                                   seed_tracks=None,
                                   seed_artists=None):
         track_items = self.sp.recommendations(
             seed_tracks=seed_tracks, seed_artists=seed_artists
         )["tracks"]
-        sp_track_recs = [Track(track_item) for track_item in track_items]
+        sp_track_recs = [SpotifyTrack(track_item) for track_item in track_items]
 
         # Remove any track that shares an artist with one of the human
         # music recs
@@ -161,7 +169,7 @@ class Spotify:
         else:
             return None
 
-    def _do_musics_share_artist(self, music1: Music, music2: Music):
+    def _do_musics_share_artist(self, music1: SpotifyMusic, music2: SpotifyMusic):
         music1_artist_ids = [artist.id for artist in music1.artists]
         music2_artist_ids = [artist.id for artist in music2.artists]
 
@@ -169,7 +177,7 @@ class Spotify:
 
         return bool(common_ids)
 
-    def _remove_music_from_list(self, music_id: str, music_list: [Music]):
+    def _remove_music_from_list(self, music_id: str, music_list: List[SpotifyMusic]):
         for music in music_list:
             if music_id == music.id:
                 music_list.remove(music)

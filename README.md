@@ -1,5 +1,5 @@
 # musicrecs
-A Spotify-powered music recommendation exchange web platform with snoozin 'n friends
+A Spotify-powered music recommendation game with snoozin 'n friends
 
 # Running locally
 ## Requirements
@@ -9,7 +9,7 @@ A Spotify-powered music recommendation exchange web platform with snoozin 'n fri
 ## Setup
 - Make a spotify developer app through "https://developer.spotify.com/dashboard"
     - note the client id and client secret for your new app
-- install sqlite with `apt-get install sqlite`
+- install sqlite with `apt-get install sqlite3`
 - Create a python3 virtual environment `python3 -m venv name-of-venv`
 - Activate your virtual environment `source path-to-venv/bin/activate`
 - Install required packages with `pip install -r requirements.txt`
@@ -25,6 +25,7 @@ A Spotify-powered music recommendation exchange web platform with snoozin 'n fri
     ```bash
     export SPOTIPY_CLIENT_ID="insert-spotify-client-id-here"
     export SPOTIPY_CLIENT_SECRET="insert-spotify-client-secret-here"
+    export SPOTIPY_REDIRECT_URI="http://localhost:5000/sp_auth_complete"
     export SQLALCHEMY_DATABASE_URI="sqlite:////insert/database/file/path.db"
     export FLASK_SECRET_KEY="insert-your-secret-key"
     export FLASK_APP=musicrecs

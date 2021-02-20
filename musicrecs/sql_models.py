@@ -31,6 +31,7 @@ class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     spotify_link = db.Column(db.String(MAX_SPOTIFY_LINK_LENGTH), nullable=False)
     user_name = db.Column(db.String(MAX_USERNAME_LENGTH))
+    shuffled_pos = db.Column(db.Integer)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     round_id = db.Column(db.Integer, db.ForeignKey('round.id'), nullable=False)
@@ -59,16 +60,23 @@ class Round(db.Model):
     status = db.Column(db.Enum(RoundStatus), default=RoundStatus.submit)
     snoozin_rec_type = db.Column(db.Enum(SnoozinRecType), nullable=False)
     snoozin_rec_search_term = db.Column(db.String(50))
+    playlist_link = db.Column(db.String(MAX_SPOTIFY_LINK_LENGTH))
 
     submissions = db.relationship('Submission', backref=db.backref('round', lazy=True))
 
     created = db.Column(db.DateTime, nullable=False, default=datetime.utcnow)
 
     @validates('long_id')
-    def validate_user_name(self, key, long_id):
+    def validate_long_id(self, key, long_id):
         if len(long_id) > MAX_LONG_ID_LENGTH:
             raise InternalError(f"long id greater than storage limit of {MAX_LONG_ID_LENGTH} characters.")
         return long_id
+
+    @validates('playlist_link')
+    def validate_playlist_link(self, key, playlist_link):
+        if playlist_link is not None and len(playlist_link) > MAX_SPOTIFY_LINK_LENGTH:
+            raise InternalError(f"playlist link greater than storage limit of {MAX_SPOTIFY_LINK_LENGTH} characters.")
+        return playlist_link
 
     def __repr__(self):
         return '<Round %r>' % self.id
