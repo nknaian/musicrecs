@@ -106,13 +106,100 @@ input, select {
 
 /*----------------------------------------------------------------------*/
 
-/* Custom Musicrecs content starts here */
+/* Custom Musicrecs Content */
 
-/* PAGE base.html */
+/* Broad Styles */
+h2 {
+    margin-bottom: 20px;
+}
 
+/* Class Styles */
+.btn_main {
+    white-space: normal;
+}
 
-/* PAGE index.html */
-#index_p_phase {
+.div_main {
+    padding: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.div_round {
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+.div_round_content {
+    padding: 15px;
+}
+
+.p_index_phase {
     margin-left: 20px;
 }
 
+.p_index_about {
+    margin-left: 10px;
+}
+
+.p_index_faq_q {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.p_index_faq_a {
+    margin-left: 20px;
+    font-style: italic;
+}
+
+/* ID Styles (organized by page) */
+
+/* PAGE base.html */
+#base_content {
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+
+#loading {
+    display: none;
+    cursor: wait;
+}
+
+#loading div {
+    margin-left: 50%;
+    margin-top: 20px;
+    width: 35px;
+    height: 35px;
+    background: url(/static/loadingimage.gif) no-repeat;
+}
+
+/* PAGE index.html */
+
+/* PAGE round/base.html */
+#roundLinkTextbox {
+    width: 100%;
+}
+
+/* PAGE round/listen_phase.html */
+.music{
+    padding: 10px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    display: inline-block;
+}
+
+/* ERROR - This is not currently functioning, but it seemed to
+have the same issue in the html code */
+.img_albums{
+    width: {{music.IMG_DIMEN}}px;
+    height: {{music.IMG_DIMEN}}px;
+    border: 0;
+
+}
+
+/* PAGE round/submit_phase.html */

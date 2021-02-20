@@ -7,22 +7,22 @@
             method="post"
             action="{{ url_for('round_advance', long_id=round.long_id)}}"
             onsubmit="return confirmAndAdvance('Are you sure you want to reveal to all participants who recommended what?')";>
-            <input class="btn btn-danger" style="white-space: normal;" type="submit" name="advance_to_revealed" value="Advance to the revealed phase">
+            <input class="btn btn-danger btn_main" type="submit" name="advance_to_revealed" value="Advance to the revealed phase">
         </form>
     {% endif %}
 {% endblock %}
 
 {% block round_content %}
-    <div class="bg-light" style="padding: 15px;">
+    <div class="bg-light div_round_content">
         <h4> The {{round.music_type.name}}s:</h4>
         {% for recommender, music in music_submissions.items() %}
             <a href="{{music.link}}">
-                <div class="row bg-dark text-light" style="padding: 10px; margin-top: 10px; margin-bottom: 10px; margin-left: 10px; margin-right: 10px; display: inline-block;">
+                <div class="row bg-dark text-light music">
                     <div class="row">
                         <div class="col col-auto">
                             <img src="{{music.img_url}}"
                                 alt="{{music.name}}"
-                                style="width: {{music.IMG_DIMEN}}px; height:{{music.IMG_DIMEN}}px; border:0;">
+                                class=img_albums>
                         </div>
                         <div class="col" style="min-width: 200px">
                             <span class="align-middle"><b>{{music.name}}</b> by {{music.get_artists_comma_separated()}}</span>
