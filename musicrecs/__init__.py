@@ -8,29 +8,42 @@ from flask_bootstrap import Bootstrap
 from flask_session import Session
 
 from musicrecs.spotify.spotify import Spotify
+from musicrecs.config import Config
 
-# Create flask application and database
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('SQLALCHEMY_DATABASE_URI')
-app.config['SECRET_KEY'] = os.environ.get('FLASK_SECRET_KEY')
-app.config['SESSION_TYPE'] = 'filesystem'
-app.config['SESSION_FILE_DIR'] = './.flask_session/'
-db = SQLAlchemy(app)
 
-# Create bootstrap flask app
-Bootstrap(app)
-
-# Create flask session
-Session(app)
-
-# import sql models and create database
-from musicrecs.sql_models import User, Submission, Round
-db.create_all()
-
-# Seed random
-random.seed(time.time())
+# Create sqlalchemy database
+db = SQLAlchemy()
 
 # Create 'client credentials' spotify interface
 spotify_iface = Spotify()
 
-from musicrecs import views
+# Seed random
+random.seed(time.time())
+
+
+def create_app(config_class=Config):
+    # Create flask application from config
+    app = Flask(__name__)
+    app.config.from_object(config_class)
+
+    # Initialize database
+    db.init_app(app)
+
+    # Register blueprints
+    from musicrecs.main import bp as main_bp
+    app.register_blueprint(main_bp)
+
+    from musicrecs.external_auth import bp as external_auth_bp
+    app.register_blueprint(external_auth_bp)
+
+    # Create bootstrap flask app
+    Bootstrap(app)
+
+    # Create flask session
+    Session(app)
+
+    # Create all tables in the database
+    with app.app_context():
+        db.create_all()
+
+    return app

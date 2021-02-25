@@ -5,7 +5,7 @@
     {% if round.status != revealed %}
         <form
             method="post"
-            action="{{ url_for('round_advance', long_id=round.long_id)}}"
+            action="{{ url_for('main.round_advance', long_id=round.long_id)}}"
             onsubmit="return confirmAndAdvance('Are you sure you want to reveal to all participants who recommended what?')";>
             <input class="btn btn-danger btn_main" type="submit" name="advance_to_revealed" value="Advance to the revealed phase">
         </form>
@@ -36,7 +36,7 @@
         {% elif playlist_form %}
             <div class="bg-light div_main">
                 <h4>Create a playlist for this round</h4>
-                {{ wtf.quick_form(playlist_form, method="post", action=url_for('round_create_playlist', long_id=round.long_id)) }}
+                {{ wtf.quick_form(playlist_form, method="post", action=url_for('main.round_create_playlist', long_id=round.long_id)) }}
             </div>
         {% endif %}
     </div>

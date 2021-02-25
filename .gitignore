@@ -128,15 +128,11 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-# gmail authentication
-gmail_creds.json
-*.pickle
-
-# local stuff
-localtools/
+# custom
 test.py
 *.vscode
 setup.sh
 musicrecs.db
 test.html
-
+.flask_session/
+.spotify_user_caches/
