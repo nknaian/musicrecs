@@ -18,10 +18,8 @@ A Spotify-powered music recommendation game with snoozin 'n friends
     import secrets
     print(secrets.token_urlsafe(16))
     ```
-
-# Run
-- Activate your virtual environment `source path-to-venv/bin/activate`
-- Set environment variables:
+- Create a file named *.env* at the root of your repo, and put in the following export commands
+  (replacing 'insert here' values with your own values):
     ```bash
     export SPOTIPY_CLIENT_ID="insert-spotify-client-id-here"
     export SPOTIPY_CLIENT_SECRET="insert-spotify-client-secret-here"
@@ -31,6 +29,9 @@ A Spotify-powered music recommendation game with snoozin 'n friends
     export FLASK_APP=musicrecs
     export FLASK_ENV=development
     ```
-    - **note**: The sqlite database will be created at the path you specify upon the first run of the site.
+- **note**: The sqlite database will be created at the path you specify upon the first run of the site.
+
+# Run
+- Activate your virtual environment `source path-to-venv/bin/activate`
 - From the top level musicrecs directory, run: `flask run`
 - Open "localhost:5000" in your browser
