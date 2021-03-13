@@ -37,6 +37,15 @@ A Spotify-powered music recommendation game with snoozin 'n friends
 - From the top level musicrecs directory, run: `flask run`
 - Open "localhost:5000" in your browser
 
+### Using ngrok
+ngrok is a tool that creates a tunnel to expose the local flask application
+to the public internet. This can be useful for tasks such as mobile testing.
+
+To use ngrok with musicrecs, add `export USE_NGROK=True` to your .env file.
+The public url that ngrok creates will be printed to the console upon starting
+flask, and it will be available within the application through the "PUBLIC_URL"
+entry in the `app.config`.
+
 ## unit tests
 - Activate your virtual environment `source path-to-venv/bin/activate`
 - Run: `python -m unittest`

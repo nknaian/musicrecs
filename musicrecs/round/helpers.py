@@ -12,8 +12,14 @@ import musicrecs.random_words.random_words as random_words
 from musicrecs.spotify.item.spotify_music import SpotifyMusic
 from musicrecs.spotify.item.spotify_playlist import SpotifyPlaylist
 from musicrecs.enums import SnoozinRecType
-from musicrecs.errors.exceptions import MusicrecsError
+from musicrecs.errors.exceptions import MusicrecsAlert, MusicrecsError
 from musicrecs.external_auth.decorators import retry_after_auth
+
+
+"""CONSTANTS"""
+
+
+MAX_SNOOZIN_REC_SEARCH_ATTEMPTS = 50
 
 
 """PUBLIC FUNCTIONS"""
@@ -59,7 +65,6 @@ def create_playlist(round_long_id, name) -> SpotifyPlaylist:
     return new_playlist
 
 
-# TODO: maybe we need to put in a max number of search attempts for buggy situations...
 def get_snoozin_rec(round: Round) -> SpotifyMusic:
     """Get a random or similar music recommendation.
 
@@ -74,11 +79,17 @@ def get_snoozin_rec(round: Round) -> SpotifyMusic:
         num_words = random.randint(1, 2)
 
         search_term = ""
+        num_attempts = 0
         while snoozin_rec is None:
+            if num_attempts > MAX_SNOOZIN_REC_SEARCH_ATTEMPTS:
+                raise MusicrecsAlert("We're having trouble getting a rec from snoozin...",
+                                     redirect_location=url_for("round.index", long_id=round.long_id))
+
             search_term = " ".join(
                 rw_gen.get_random_words(num_words)
             )
             snoozin_rec = spotify_iface.search_for_music(round.music_type, search_term)
+            num_attempts += 1
 
         # Set the round's search term
         round.snoozin_rec_search_term = search_term

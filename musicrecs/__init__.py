@@ -1,4 +1,5 @@
 import os
+import sys
 import random
 import time
 
@@ -30,6 +31,9 @@ def create_app(config_class=Config):
     if not app.config["TESTING"]:
         spotify_iface.init_sp()
 
+    # Initialize ngrok
+    _init_ngrok(app)
+
     # Initialize database
     db.init_app(app)
 
@@ -57,3 +61,29 @@ def create_app(config_class=Config):
         db.create_all()
 
     return app
+
+
+def _init_ngrok(app):
+    """Initialize ngrok if desired for development environment"""
+    if app.config.get("ENV") == "development" and \
+            os.environ.get("USE_NGROK", "False") == "True":
+
+        # pyngrok will only be installed, and should only ever be initialized, in a dev environment
+        from pyngrok import ngrok
+
+        # Create the ngrok tunnel on the first run of the app
+        if os.environ.get("WERKZEUG_RUN_MAIN") != "true":
+            # Get the dev server port (defaults to 5000 for Flask, can be overridden with `--port`
+            # when starting the server
+            port = sys.argv[sys.argv.index("--port") + 1] if "--port" in sys.argv else 5000
+
+            # Open a ngrok tunnel to the dev server
+            public_url = ngrok.connect(port).public_url
+            print(" * ngrok tunnel \"{}\" -> \"http://127.0.0.1:{}\"".format(public_url, port))
+
+        # Retrieve the ngrok public url upon reloads and save to app config
+        else:
+            public_url = ngrok.get_tunnels()[0].public_url
+
+        # Save the public url to the app config
+        app.config["PUBLIC_URL"] = public_url
