@@ -9,12 +9,15 @@
 
         <!-- Bootstrap CSS -->
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+        
+        <!-- Musicrecs CSS -->
+        <link rel="stylesheet" href="../static/style.css">
 
         <title>{% block title %} {% endblock %}</title>
     </head>
     <body>
         <nav class="navbar navbar-expand-md navbar-light bg-light">
-            <a class="navbar-brand" href="{{ url_for('index')}}"><img src="/static/Snoozyphones_Page.png" style="height: 40px; width: 40px"></a>
+            <a class="navbar-brand" href="{{ url_for('index')}}"><img src="/static/Snoozyphones_Page.png" class="navbar_logo"></a>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>

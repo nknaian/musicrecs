@@ -138,3 +138,5 @@ test.py
 *.vscode
 setup.sh
 musicrecs.db
+test.html
+
