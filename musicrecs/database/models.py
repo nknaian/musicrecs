@@ -3,7 +3,7 @@ from sqlalchemy.orm import validates
 
 from musicrecs import db
 from musicrecs.enums import MusicType, SnoozinRecType, RoundStatus
-from musicrecs.exceptions import UserError, InternalError
+from musicrecs.errors.exceptions import MusicrecsError
 
 
 '''Storage Constants'''
@@ -39,13 +39,13 @@ class Submission(db.Model):
     @validates('spotify_link')
     def validate_spotify_link(self, key, spotify_link):
         if len(spotify_link) > MAX_SPOTIFY_LINK_LENGTH:
-            raise InternalError(f"Spotify link greater than storage limit of {MAX_SPOTIFY_LINK_LENGTH} characters.")
+            raise MusicrecsError(f"Spotify link greater than storage limit of {MAX_SPOTIFY_LINK_LENGTH} characters.")
         return spotify_link
 
     @validates('user_name')
     def validate_user_name(self, key, user_name):
         if len(user_name) > MAX_USERNAME_LENGTH:
-            raise UserError(f"Username too long. Must be fewer than {MAX_USERNAME_LENGTH} characters.")
+            raise MusicrecsError(f"User name greater than storage limit of {MAX_USERNAME_LENGTH} characters.")
         return user_name
 
     def __repr__(self):
@@ -69,13 +69,13 @@ class Round(db.Model):
     @validates('long_id')
     def validate_long_id(self, key, long_id):
         if len(long_id) > MAX_LONG_ID_LENGTH:
-            raise InternalError(f"long id greater than storage limit of {MAX_LONG_ID_LENGTH} characters.")
+            raise MusicrecsError(f"long id greater than storage limit of {MAX_LONG_ID_LENGTH} characters.")
         return long_id
 
     @validates('playlist_link')
     def validate_playlist_link(self, key, playlist_link):
         if playlist_link is not None and len(playlist_link) > MAX_SPOTIFY_LINK_LENGTH:
-            raise InternalError(f"playlist link greater than storage limit of {MAX_SPOTIFY_LINK_LENGTH} characters.")
+            raise MusicrecsError(f"playlist link greater than storage limit of {MAX_SPOTIFY_LINK_LENGTH} characters.")
         return playlist_link
 
     def __repr__(self):

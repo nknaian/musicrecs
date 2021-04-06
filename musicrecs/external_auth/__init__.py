@@ -6,16 +6,18 @@ It uses the flask session to store and retrieve information about
 what the user was trying to do before they were sent away for external
 authentication.
 The following keys names are used in the 'session' object:
-- "external_auth_url"
+- "external_auth_request_url"
 - "external_auth_referrer_url"
-- "external_auth_form_data"
+- "external_auth_retry_func"
 
 An example usage is: A user presses a button to create a new spotify
 playlist for a round but is not yet authenticated through spotify. This
-interface should be able to be used to save the round and new playlist
-information (i.e name, description, image), and then return the user
-back to the round page after spotify authentication is complete, with
-the playlist created and visible.
+interface accomplishes the following tasks:
+1. Direct the user to the authorization url to sign in with spotify.
+2. Retry the function that creates the playlist using the information the
+   user had submitted.
+3. Redirect the user to page they were on when they tried creating the
+   playlist, this time with the playlist created.
 """
 
 from flask import Blueprint

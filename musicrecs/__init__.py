@@ -26,6 +26,10 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
+    # Initialize spotify as long as we're not testing
+    if not app.config["TESTING"]:
+        spotify_iface.init_sp()
+
     # Initialize database
     db.init_app(app)
 
@@ -33,8 +37,14 @@ def create_app(config_class=Config):
     from musicrecs.main import bp as main_bp
     app.register_blueprint(main_bp)
 
+    from musicrecs.round import bp as round_bp
+    app.register_blueprint(round_bp)
+
     from musicrecs.external_auth import bp as external_auth_bp
     app.register_blueprint(external_auth_bp)
+
+    from musicrecs.errors import bp as errors_bp
+    app.register_blueprint(errors_bp)
 
     # Create bootstrap flask app
     Bootstrap(app)

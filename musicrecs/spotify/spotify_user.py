@@ -18,7 +18,7 @@ from spotipy.oauth2 import SpotifyOAuth
 
 from flask import session
 
-from musicrecs.exceptions import ExternalAuthFailure
+from musicrecs.external_auth.exceptions import ExternalAuthFailure
 
 from .item.spotify_music import SpotifyTrack
 from .item.spotify_playlist import SpotifyPlaylist
@@ -29,7 +29,7 @@ from .item.spotify_playlist import SpotifyPlaylist
 
 SCOPE = 'playlist-modify-public'
 CACHE_FOLDER = '.spotify_user_caches/'
-MAX_PLAYLIST_NAME_LENGTH = 100
+
 
 '''PUBLIC AUTH FUNCTIONS'''
 
@@ -108,11 +108,6 @@ def create_playlist(name: str, tracks: List[SpotifyTrack]) -> SpotifyPlaylist:
 
     # Get the current user's id
     user_id = sp.current_user()["id"]
-
-    # If the name is too long, only use the first MAX_PLAYLIST_NAME_LENGTH chars
-    # TODO: It would be nice to give the user an alert abou
-    if len(name) > MAX_PLAYLIST_NAME_LENGTH:
-        name = name[:MAX_PLAYLIST_NAME_LENGTH]
 
     # Create the playlist with the given name, for the current user.
     sp.user_playlist_create(user_id, name)

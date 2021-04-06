@@ -4,7 +4,7 @@
 {% block round_nav %}
     <form
         method="post"
-        action="{{ url_for('main.round_advance', long_id=round.long_id)}}"
+        action="{{ url_for('round.advance', long_id=round.long_id)}}"
         onsubmit="return confirmAndAdvance('Are you sure you want to end the submission phase for all participants?')">
         <input
             class="btn btn-danger btn_main"
@@ -18,6 +18,20 @@
 {% block round_content %}
     <div class="bg-light div_round_content">
         <h4>Submit music to the round</h4>
-        {{ wtf.quick_form(rec_form, method="post", action=url_for('main.round_submit_rec', long_id=round.long_id)) }}
+        <form class="form form-horizontal" method="post" role="form">
+            {{ rec_form.hidden_tag() }}
+
+            {{ wtf.form_field(rec_form.name) }}
+            {% for error in rec_form.name.errors %}
+                <div class="alert alert-danger" role="alert">{{ error }}</div>
+            {% endfor %}
+
+            {{ wtf.form_field(rec_form.spotify_link) }}
+            {% for error in rec_form.spotify_link.errors %}
+                <div class="alert alert-danger" role="alert">{{ error }}</div>
+            {% endfor %}
+
+            {{ wtf.form_field(rec_form.submit) }}
+        </form>
     </div>
 {% endblock %}

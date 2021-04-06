@@ -5,4 +5,5 @@ Flask-sqlalchemy
 Flask-WTF
 Flask-Bootstrap4
 Flask-Session
+Flask-Testing
 spotipy == 2.16.1

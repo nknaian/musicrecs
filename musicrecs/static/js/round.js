@@ -1,6 +1,6 @@
-function fillRoundLinkTextbox() {
+function fillRoundLinkTextbox(round_link) {
     var textbox = document.getElementById("roundLinkTextbox")
-    textbox.value = window.location.href
+    textbox.value = round_link
 }
 
 function copyRoundLink() {

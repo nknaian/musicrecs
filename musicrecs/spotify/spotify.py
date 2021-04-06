@@ -36,11 +36,11 @@ class Spotify:
     instance of client credentials authenticated spotipy.
     """
 
-    def __init__(self):
+    """Public Functions"""
+
+    def init_sp(self):
         self.sp = spotipy.Spotify(
             client_credentials_manager=SpotifyClientCredentials())
-
-    """Public Functions"""
 
     def search_for_music(self, music_type: MusicType, search_term: str) -> Optional[SpotifyMusic]:
         """Gets spotify music by searching the search term. Filters

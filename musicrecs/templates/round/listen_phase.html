@@ -5,7 +5,7 @@
     {% if round.status != revealed %}
         <form
             method="post"
-            action="{{ url_for('main.round_advance', long_id=round.long_id)}}"
+            action="{{ url_for('round.advance', long_id=round.long_id)}}"
             onsubmit="return confirmAndAdvance('Are you sure you want to reveal to all participants who recommended what?')";>
             <input class="btn btn-danger btn_main" type="submit" name="advance_to_revealed" value="Advance to the revealed phase">
         </form>
@@ -36,7 +36,20 @@
         {% elif playlist_form %}
             <div class="bg-light div_main">
                 <h4>Create a playlist for this round</h4>
-                {{ wtf.quick_form(playlist_form, method="post", action=url_for('main.round_create_playlist', long_id=round.long_id)) }}
+                <form class="form form-horizontal" method="post" role="form">
+                    {{ playlist_form.hidden_tag() }}
+
+                    {{
+                        wtf.form_field(playlist_form.name,
+                                       maxlength=playlist_form.max_name_length,
+                                       value=round.description[:playlist_form.max_name_length])
+                    }}
+                    {% for error in playlist_form.name.errors %}
+                        <div class="alert alert-danger" role="alert">{{ error }}</div>
+                    {% endfor %}
+
+                    {{ wtf.form_field(playlist_form.submit) }}
+                </form>
             </div>
         {% endif %}
     </div>
@@ -56,7 +69,7 @@
                             <span class="align-middle"><b>{{music.name}}</b> by {{music.get_artists_comma_separated()}}</span>
                         </div>
                     </div>
-                    {% if round.status ==  revealed %}
+                    {% if round.status.name == "revealed" %}
                         <div class="align-bottom text-right font-italic">recommended by {{user_name}}</div>
                     {% endif %}
                 </div>
