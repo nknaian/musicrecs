@@ -43,7 +43,7 @@ class _UserName(object):
     def __call__(self, form, field):
         if len(field.data) > MAX_USERNAME_LENGTH:
             raise ValidationError(f'Name too long, must be fewer than {MAX_USERNAME_LENGTH} characters')
-        elif field.data == "snoozin":
+        elif field.data.lower().strip() == "snoozin":
             raise ValidationError('This town is only big enough for one snoozin...')
         elif user_name_taken(form._round, field.data):
             raise ValidationError("This name already is taken already for the round!")
