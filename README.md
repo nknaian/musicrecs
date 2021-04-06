@@ -32,6 +32,15 @@ A Spotify-powered music recommendation game with snoozin 'n friends
 - **note**: The sqlite database will be created at the path you specify upon the first run of the site.
 
 # Run
+## flask localhost
 - Activate your virtual environment `source path-to-venv/bin/activate`
 - From the top level musicrecs directory, run: `flask run`
 - Open "localhost:5000" in your browser
+
+## unit tests
+- Activate your virtual environment `source path-to-venv/bin/activate`
+- Run: `python -m unittest`
+
+## syntax and style
+- Activate your virtual environment `source path-to-venv/bin/activate`
+- Run: `flake8`
