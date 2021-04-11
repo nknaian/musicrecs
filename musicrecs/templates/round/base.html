@@ -43,11 +43,16 @@
     {% if round.submissions %}
         <div class="bg-light div_main">
             <h4>The recommenders</h4>
-                {% for submission in round.submissions %}
-                <div class="row bg-dark text-light div_round">
-                    {{ submission.user_name }}
+            {% for submission in round.submissions %}
+                <div class="row bg-dark text-light div_round" style="min-width: 125px;">
+                    <div style="text-align: center;">{{ submission.user_name }}</div>
+                    {% if submission.guesses %}
+                        <div class="align-bottom text-right font-italic" style="font-size: small; color: green;">
+                            guessed
+                        </div>
+                    {% endif %}
                 </div>
-                {% endfor %}
+            {% endfor %}
         </div>
     {% endif %}
 

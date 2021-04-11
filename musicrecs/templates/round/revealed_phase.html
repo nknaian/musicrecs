@@ -1,0 +1,75 @@
+{% extends 'round/base.html' %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block round_nav %}
+{% endblock %}
+
+{% block round_content %}
+    {% if playlist %}
+        <div class="bg-light div_round_content">
+            <h4>The playlist</h4>
+            <a href="{{playlist.link}}">
+                <div class="row bg-dark text-light div_round">
+                    <div class="row">
+                        {%if playlist.img_url %}
+                            <div class="col col-auto">
+                                <img src="{{playlist.img_url}}"
+                                    alt="{{playlist.name}}"
+                                    class="img_playlist">
+                            </div>
+                        {% endif %}
+                        <div class="col div_listen">
+                            <span class="align-middle">{{playlist.name}}</span>
+                        </div>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% endif %}
+
+    <div class="bg-light div_round_content">
+        <h4> The {{round.music_type.name}}s</h4>
+        {% for user_name, music in music_submissions.items() %}
+            <a href="{{music.link}}">
+                <div class="row bg-dark text-light div_round">
+                    <div class="row">
+                        <div class="col div_round_revealed_music_user_name">
+                            {{user_name}}
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col col-auto">
+                            <img src="{{music.img_url}}"
+                                alt="{{music.name}}"
+                                class=img_albums>
+                        </div>
+                        <div class="col div_listen">
+                            <span class="align-middle"><b>{{music.name}}</b> by {{music.get_artists_comma_separated()}}</span>
+                        </div>
+                    </div>
+    
+                    <div class="align-bottom text-right font-italic">{{loop.index0}}</div>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+
+    <div class="bg-light div_round_content">
+        <h4>The guesses</h4>
+        {% for submission in round.submissions %}
+            {% if submission.guesses %}
+                <div class="row bg-dark text-light div_round">
+                    <p class="p_round_revealed_guess_user_name">{{submission.user_name}}</p>
+                    {% for guess in submission.guesses %}
+                        {% if guess.correct %}
+                            <p class="p_round_revealed_correct_guess">{{guess.user_name}}: {{guess.music_num}}</p>
+                        {% else %}
+                            <p class="p_round_revealed_incorrect_guess">{{guess.user_name}}: {{guess.music_num}}</p>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endfor %}
+    </div>
+
+{% endblock %}

@@ -2,57 +2,54 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 {% block round_nav %}
-    {% if round.status != revealed %}
-        <form
-            method="post"
-            action="{{ url_for('round.advance', long_id=round.long_id)}}"
-            onsubmit="return confirmAndAdvance('Are you sure you want to reveal to all participants who recommended what?')";>
-            <input class="btn btn-danger btn_main" type="submit" name="advance_to_revealed" value="Advance to the revealed phase">
-        </form>
-    {% endif %}
+    <form
+        method="post"
+        action="{{ url_for('round.advance', long_id=round.long_id)}}"
+        onsubmit="return confirmAndAdvance('Are you sure you want to reveal to all participants who recommended what?')";>
+        <input class="btn btn-danger btn_main" type="submit" name="advance_to_revealed" value="Advance to the revealed phase">
+    </form>
 {% endblock %}
 
 {% block round_content %}
-        {% if playlist %}
-            <div class="bg-light div_round_content">
-                <h4>The playlist</h4>
-                <a href="{{playlist.link}}">
-                    <div class="row bg-dark text-light div_round">
-                        <div class="row">
-                            {%if playlist.img_url %}
-                                <div class="col col-auto">
-                                    <img src="{{playlist.img_url}}"
-                                        alt="{{playlist.name}}"
-                                        class="img_playlist">
-                                </div>
-                            {% endif %}
-                            <div class="col div_listen">
-                                <span class="align-middle">{{playlist.name}}</span>
+    {% if playlist %}
+        <div class="bg-light div_round_content">
+            <h4>The playlist</h4>
+            <a href="{{playlist.link}}">
+                <div class="row bg-dark text-light div_round">
+                    <div class="row">
+                        {%if playlist.img_url %}
+                            <div class="col col-auto">
+                                <img src="{{playlist.img_url}}"
+                                    alt="{{playlist.name}}"
+                                    class="img_playlist">
                             </div>
+                        {% endif %}
+                        <div class="col div_listen">
+                            <span class="align-middle">{{playlist.name}}</span>
                         </div>
                     </div>
-                </a>
-            </div>
-        {% elif playlist_form %}
-            <div class="bg-light div_main">
-                <h4>Create a playlist for this round</h4>
-                <form class="form form-horizontal" method="post" role="form">
-                    {{ playlist_form.hidden_tag() }}
+                </div>
+            </a>
+        </div>
+    {% elif playlist_form %}
+        <div class="bg-light div_round_content">
+            <h4>Create a playlist for this round</h4>
+            <form class="form form-horizontal" method="post" role="form">
+                {{ playlist_form.hidden_tag() }}
 
-                    {{
-                        wtf.form_field(playlist_form.name,
-                                       maxlength=playlist_form.max_name_length,
-                                       value=round.description[:playlist_form.max_name_length])
-                    }}
-                    {% for error in playlist_form.name.errors %}
-                        <div class="alert alert-danger" role="alert">{{ error }}</div>
-                    {% endfor %}
+                {{
+                    wtf.form_field(playlist_form.name,
+                                    maxlength=playlist_form.max_name_length,
+                                    value=round.description[:playlist_form.max_name_length])
+                }}
+                {% for error in playlist_form.name.errors %}
+                    <div class="alert alert-danger" role="alert">{{ error }}</div>
+                {% endfor %}
 
-                    {{ wtf.form_field(playlist_form.submit) }}
-                </form>
-            </div>
-        {% endif %}
-    </div>
+                {{ wtf.form_field(playlist_form.submit_playlist) }}
+            </form>
+        </div>
+    {% endif %}
 
     <div class="bg-light div_round_content">
         <h4> The {{round.music_type.name}}s</h4>
@@ -69,11 +66,37 @@
                             <span class="align-middle"><b>{{music.name}}</b> by {{music.get_artists_comma_separated()}}</span>
                         </div>
                     </div>
-                    {% if round.status.name == "revealed" %}
-                        <div class="align-bottom text-right font-italic">recommended by {{user_name}}</div>
-                    {% endif %}
+
+                    <div class="align-bottom text-right font-italic">{{loop.index0}}</div>
                 </div>
             </a>
         {% endfor %}
     </div>
+
+    <div class="bg-light div_round_content">
+        <h4>Make your guess</h4>
+        <form class="form form-horizontal" method="post" role="form">
+            {{ guess_form.hidden_tag() }}
+    
+            {{ wtf.form_field(guess_form.name)}}
+            {% for error in guess_form.name.errors %}
+                <div class="alert alert-danger" role="alert">{{ error }}</div>
+            {% endfor %}
+
+            {{ wtf.form_field(guess_form.guess_field)}}
+            {% for error in guess_form.guess_field.errors %}
+                <div class="alert alert-danger" role="alert">{{ error }}</div>
+            {% endfor %}
+            <p style="font-style: italic; font-size: smaller;">
+                ex:<br>
+                <span style="margin-left: 20px;">Nick Jones: 3</span><br>
+                <span style="margin-left: 20px;">John Doe: 1</span><br>
+                <span style="margin-left: 20px;">Dory Johnson: 0</span><br>
+                <span style="margin-left: 20px;">Jonie Nixon: 2</span>
+            </p>
+
+            {{ wtf.form_field(guess_form.submit_guess) }}
+        </form>
+    </div>
+    
 {% endblock %}

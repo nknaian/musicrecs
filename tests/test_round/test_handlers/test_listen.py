@@ -6,6 +6,8 @@ from musicrecs import spotify_iface
 from musicrecs.spotify import spotify_user
 from musicrecs.enums import MusicType, RoundStatus, SnoozinRecType
 from musicrecs.spotify.item.spotify_playlist import SpotifyPlaylist
+from musicrecs.round.helpers import get_shuffled_user_name_list
+from musicrecs.database.models import Submission
 from musicrecs.database.helpers import add_round_to_db, add_submission_to_db
 
 from tests.test_round import RoundTestCase
@@ -39,6 +41,26 @@ class RoundListenTestCase(RoundTestCase):
         self.assertIn(bytes("https://open.spotify.com/album/3a0UOgDWw2pTajw85QPMiz", 'utf-8'), response.data)
         self.assertIn(bytes("snoozin", 'utf-8'), response.data)
         self.assertIn(bytes("https://open.spotify.com/album/5Z9iiGl2FcIfa3BMiv6OIw", 'utf-8'), response.data)
+
+        # Submit Nick Jones' guess (cheating to make sure it's correct)
+        nick_jones_num = get_shuffled_user_name_list(round).index("Nick Jones")
+        snoozin_num = get_shuffled_user_name_list(round).index("snoozin")
+        response = self.client.post(
+            url_for('round.listen', long_id=round.long_id),
+            data=dict(name="Nick Jones",
+                      guess_field=f"snoozin:{snoozin_num}\nNick Jones: {nick_jones_num}",
+                      submit_guess="Submit"),
+            follow_redirects=False
+        )
+
+        # Verify that post was successfull, and redirected
+        self.assertRedirects(response, url_for('round.listen', long_id=round.long_id))
+
+        # Verify that Nick Jones's guesses were added to the database and are correct
+        for guess in Submission.query.filter_by(user_name="Nick Jones").first().guesses:
+            self.assertEqual(guess.submission_id, 1)
+            self.assertEqual(get_shuffled_user_name_list(round).index(guess.user_name), guess.music_num)
+            self.assertEqual(guess.correct, True)
 
     def test_track_listen(self):
         # Add a round to the database
@@ -80,7 +102,7 @@ class RoundListenTestCase(RoundTestCase):
         # Make a post to create a playlist
         response = self.client.post(
             url_for('round.listen', long_id=round.long_id),
-            data=dict(name="john doe and snoozin make a playlist"),
+            data=dict(name="john doe and snoozin make a playlist", submit_playlist="Submit"),
             follow_redirects=False
         )
 
@@ -94,3 +116,23 @@ class RoundListenTestCase(RoundTestCase):
         response = self.client.get(url_for('round.listen', long_id=round.long_id))
         self.assert_200(response)
         self.assertIn(bytes("john doe and snoozin make a playlist", 'utf-8'), response.data)
+
+        # Submit John Doe's guess
+        john_doe_num = get_shuffled_user_name_list(round).index("John Doe")
+        snoozin_num = get_shuffled_user_name_list(round).index("snoozin")
+        response = self.client.post(
+            url_for('round.listen', long_id=round.long_id),
+            data=dict(name="John Doe",
+                      guess_field=f"snoozin:{snoozin_num}\nJohn Doe: {john_doe_num}",
+                      submit_guess="Submit"),
+            follow_redirects=False
+        )
+
+        # Verify that post was successfull, and redirected
+        self.assertRedirects(response, url_for('round.listen', long_id=round.long_id))
+
+        # Verify that John Doe's guesses were added to the database and are correct
+        for guess in Submission.query.filter_by(user_name="John Doe").first().guesses:
+            self.assertEqual(guess.submission_id, 1)
+            self.assertEqual(get_shuffled_user_name_list(round).index(guess.user_name), guess.music_num)
+            self.assertEqual(guess.correct, True)

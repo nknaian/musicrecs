@@ -22,6 +22,7 @@ class User(db.Model):
     email = db.Column(db.String(50), unique=True, nullable=False)
 
     submissions = db.relationship('Submission', backref=db.backref('user', lazy=True))
+    guesses = db.relationship('Guess', backref=db.backref('user', lazy=True))
 
     def __repr__(self):
         return '<User %r>' % self.username
@@ -35,6 +36,8 @@ class Submission(db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
     round_id = db.Column(db.Integer, db.ForeignKey('round.id'), nullable=False)
+
+    guesses = db.relationship('Guess', backref=db.backref('submission', lazy=True))
 
     @validates('spotify_link')
     def validate_spotify_link(self, key, spotify_link):
@@ -50,6 +53,25 @@ class Submission(db.Model):
 
     def __repr__(self):
         return '<Submission %r>' % self.id
+
+
+class Guess(db.Model):
+    id = db.Column(db.Integer, primary_key=True)
+    user_name = db.Column(db.String(MAX_USERNAME_LENGTH), nullable=False)
+    music_num = db.Column(db.Integer, nullable=False)
+    correct = db.Column(db.Boolean, nullable=False)
+
+    submission_id = db.Column(db.Integer, db.ForeignKey('submission.id'), nullable=False)
+    user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
+
+    @validates('user_name')
+    def validate_user_name(self, key, user_name):
+        if len(user_name) > MAX_USERNAME_LENGTH:
+            raise MusicrecsError(f"User name greater than storage limit of {MAX_USERNAME_LENGTH} characters.")
+        return user_name
+
+    def __repr__(self) -> str:
+        return '<Guess %r>' % self.id
 
 
 class Round(db.Model):

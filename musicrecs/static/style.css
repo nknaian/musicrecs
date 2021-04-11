@@ -41,7 +41,17 @@ h5 {
 
 .div_round_content {
     padding: 15px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }
+
+.div_round_revealed_music_user_name {
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+    margin-bottom: 10px;
+}
+
 
 .img_albums{
     width: {{music.IMG_DIMEN}}px;
@@ -73,6 +83,24 @@ h5 {
 .p_index_faq_a {
     margin-left: 20px;
     font-style: italic;
+}
+
+.p_round_revealed_guess_user_name {
+    text-align: center;
+    font-weight: bold;
+    font-style: italic;
+}
+
+.p_round_revealed_correct_guess {
+    text-align: left;
+    margin-bottom: 2px;
+    color: green;
+}
+
+.p_round_revealed_incorrect_guess {
+    text-align: left;
+    margin-bottom: 2px;
+    text-decoration: line-through;
 }
 
 /* ID Styles (organized by page) */

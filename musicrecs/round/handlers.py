@@ -9,8 +9,9 @@ from musicrecs.enums import RoundStatus, MusicType
 from musicrecs.errors.exceptions import MusicrecsAlert, MusicrecsError
 
 from . import bp
-from .forms import TrackrecForm, AlbumrecForm, PlaylistForm
-from .helpers import get_snoozin_rec, get_shuffled_music_submissions, get_abs_round_link, create_playlist
+from .forms import GuessForm, TrackrecForm, AlbumrecForm, PlaylistForm
+from .helpers import process_guess_form, get_snoozin_rec, get_shuffled_music_submissions, \
+    get_abs_round_link, create_playlist
 
 
 @bp.route('/round/<string:long_id>', methods=["GET", "POST"])
@@ -74,7 +75,7 @@ def listen(long_id):
     round = Round.query.filter_by(long_id=long_id).first()
 
     # Make sure this is the correct handler for the round's current status
-    if round.status not in [RoundStatus.listen, RoundStatus.revealed]:
+    if round.status != RoundStatus.listen:
         raise MusicrecsAlert(f"This round is currently in the {round.status.name} phase...",
                              redirect_location=url_for(f'round.{round.status.name}', long_id=round.long_id))
 
@@ -92,19 +93,34 @@ def listen(long_id):
         playlist = spotify_iface.get_playlist_from_link(round.playlist_link)
     # If the playlist form has been submitted, then create the playlist and
     # reload the round
-    elif playlist_form and playlist_form.validate_on_submit():
+    elif playlist_form and playlist_form.submit_playlist.data and playlist_form.validate():
         create_playlist(long_id, playlist_form.name.data)
         return redirect(url_for('round.listen', long_id=long_id))
     # Notify the user if there were errors
     elif playlist_form and playlist_form.errors:
         flash("There were errors in your rec submission", "warning")
 
+    # Process guess submissions
+    guess_form = GuessForm(round)
+    guess_form.guess_field.render_kw["rows"] = len(round.submissions)
+    if guess_form.submit_guess.data and guess_form.validate():
+        # Add the user's guesses within the form to the database
+        process_guess_form(round, guess_form)
+
+        # Alert the user that the guess was submitted successfully
+        flash("Successfully submitted your guess", "success")
+
+        return redirect(url_for('round.listen', long_id=round.long_id))
+    elif guess_form.errors:
+        flash("There were errors in your guess", "warning")
+
     return render_template('round/listen_phase.html',
                            round_link=get_abs_round_link(round),
                            round=round,
                            music_submissions=get_shuffled_music_submissions(round),
                            playlist_form=playlist_form,
-                           playlist=playlist)
+                           playlist=playlist,
+                           guess_form=guess_form)
 
 
 @bp.route('/round/<string:long_id>/revealed', methods=["GET", "POST"])
@@ -112,9 +128,22 @@ def revealed(long_id):
     # Get the round from the long id
     round = Round.query.filter_by(long_id=long_id).first()
 
-    # Currently there is no difference at the python level in how the
-    # listen and revealed statuses are handled...
-    return redirect(url_for('round.listen', long_id=round.long_id))
+    # Make sure this is the correct handler for the round's current status
+    if round.status != RoundStatus.revealed:
+        raise MusicrecsAlert(f"This round is currently in the {round.status.name} phase...",
+                             redirect_location=url_for(f'round.{round.status.name}', long_id=round.long_id))
+
+    # Get the round playlist if one was made
+    if round.playlist_link:
+        playlist = spotify_iface.get_playlist_from_link(round.playlist_link)
+    else:
+        playlist = None
+
+    return render_template('round/revealed_phase.html',
+                           round_link=get_abs_round_link(round),
+                           round=round,
+                           music_submissions=get_shuffled_music_submissions(round),
+                           playlist=playlist)
 
 
 @bp.route('/round/<string:long_id>/advance', methods=['POST'])

@@ -1,6 +1,6 @@
 import secrets
 
-from musicrecs.database.models import Round, Submission
+from musicrecs.database.models import Guess, Round, Submission
 from musicrecs.enums import RoundStatus
 
 from musicrecs import db
@@ -39,6 +39,20 @@ def add_submission_to_db(round_id, user_name, spotify_link):
     db.session.commit()
 
     return submission
+
+
+def add_guess_to_db(submission_id, user_name, music_num, correct):
+    """Add the guess to the database"""
+    guess = Guess(
+        submission_id=submission_id,
+        user_name=user_name,
+        music_num=music_num,
+        correct=correct
+    )
+    db.session.add(guess)
+    db.session.commit()
+
+    return guess
 
 
 """PRIVATE FUNCTIONS"""
