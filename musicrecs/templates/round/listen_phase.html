@@ -56,7 +56,7 @@
 
     <div class="bg-light div_round_content">
         <h4> The {{round.music_type.name}}s</h4>
-        {% for user_name, music in music_submissions %}
+        {% for user_name, music in music_submissions.items() %}
             <a href="{{music.link}}">
                 <div class="row bg-dark text-light div_round">
                     <div class="row">

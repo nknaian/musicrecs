@@ -1,5 +1,5 @@
 import random
-from typing import List, Tuple
+from typing import Dict, List
 
 from flask import flash, url_for
 from flask.globals import request
@@ -51,7 +51,7 @@ def create_playlist(round_long_id, name) -> SpotifyPlaylist:
     round = Round.query.filter_by(long_id=round_long_id).first()
 
     # Get a list of the tracks in the round (in the 'shuffled' order)
-    tracks = [track for _, track in get_shuffled_music_submissions(round)]
+    tracks = list(get_shuffled_music_submissions(round).values())
 
     # Make the playlist
     new_playlist = spotify_user.create_playlist(name, tracks)
@@ -103,8 +103,8 @@ def get_snoozin_rec(round: Round) -> SpotifyMusic:
     return snoozin_rec
 
 
-def get_shuffled_music_submissions(round: Round) -> List[Tuple[str, SpotifyMusic]]:
-    """Get a shuffled list of tuples of the username paired with
+def get_shuffled_music_submissions(round: Round) -> Dict[str, SpotifyMusic]:
+    """Get a shuffled dictionary of usernames paired with
     the music they submitted for the round
     """
     # Make a list large enough to hold the submissions
@@ -123,7 +123,8 @@ def get_shuffled_music_submissions(round: Round) -> List[Tuple[str, SpotifyMusic
     # Make sure that every spot in the list was filled
     assert all(shuffled_music_submissions)
 
-    return shuffled_music_submissions
+    # Return as a dictionary of submissions in the shuffled order
+    return {user_name: music for user_name, music in shuffled_music_submissions}
 
 
 """PRIVATE FUNCTIONS"""
