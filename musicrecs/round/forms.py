@@ -38,26 +38,28 @@ class _SpotifyLink(object):
 
 
 class _NewUserName(object):
-    """Validates that the field is a valid new username.
+    """Makes sure that the field is a valid new username.
 
-    - Usernames can not be repeated in the round
+    - Usernames will not have beginning or trailing whitespace
+    - Usernames cannot be too long
+    - Usernames cannot be repeated in the round
     - Username cannot be "snoozin"
     """
     def __call__(self, form, field):
+        # Strip beginning and trailing whitespace from the user name
+        field.data = field.data.strip()
+
+        # Validate
         if len(field.data) > MAX_USERNAME_LENGTH:
             raise ValidationError(f'Name too long, must be fewer than {MAX_USERNAME_LENGTH} characters')
-        elif field.data.lower().strip() == "snoozin":
+        elif field.data.lower() == "snoozin":
             raise ValidationError('This town is only big enough for one snoozin...')
         elif field.data in get_user_names(form._round):
             raise ValidationError("This name already is taken already for the round!")
 
 
 class _GuessUserName(object):
-    """Validates that the field is a username in the round.
-
-    - Usernames can not be repeated in the round
-    - Username cannot be "snoozin"
-    """
+    """Validates that the field is user_name that hasn't guessed yet"""
     def __call__(self, form, field):
         if field.data not in get_user_names(form._round):
             raise ValidationError(f"No user named {field.data} submitted a rec!")
@@ -66,8 +68,7 @@ class _GuessUserName(object):
 
 
 class _GuessField(object):
-    """Validates that the guess field the user fills out has the correct format
-    """
+    """Validates that the guess field the user fills out has the correct format"""
     def __call__(self, form, field):
         user_names_guessed = []
         music_nums_guessed = []
