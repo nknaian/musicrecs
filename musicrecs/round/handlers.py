@@ -102,7 +102,6 @@ def listen(long_id):
 
     # Process guess submissions
     guess_form = GuessForm(round)
-    guess_form.guess_field.render_kw["rows"] = len(round.submissions)
     if guess_form.submit_guess.data and guess_form.validate():
         # Add the user's guesses within the form to the database
         process_guess_form(round, guess_form)
@@ -113,6 +112,10 @@ def listen(long_id):
         return redirect(url_for('round.listen', long_id=round.long_id))
     elif guess_form.errors:
         flash("There were errors in your guess", "warning")
+    else:
+        # Prefill the usernames, with the appropriate number of rows
+        guess_form.guess_field.render_kw["rows"] = len(round.submissions)
+        guess_form.guess_field.data = "\n".join([f"{submission.user_name}: " for submission in round.submissions])
 
     return render_template('round/listen_phase.html',
                            round_link=get_abs_round_link(round),
