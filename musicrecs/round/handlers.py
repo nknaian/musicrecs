@@ -1,3 +1,4 @@
+import re
 from flask import render_template, redirect, url_for, flash
 from flask.globals import request
 
@@ -174,3 +175,33 @@ def advance(long_id):
 
     # Go back to the round page
     return redirect(url_for('round.index', long_id=long_id))
+
+
+@bp.route('/round/spotify_search', methods=['POST'])
+def spotify_search():
+    """Search interface for javascript frontend
+    function 'get_spotify_search_results'
+    """
+    # POST request
+    if request.method == 'POST':
+        # Get values from post request
+        search_text = request.get_json()["search_text"]
+        music_type = MusicType[request.get_json()["music_type"]]
+
+        # Initialize response dict
+        response_dict = {"music_results": [], "invalid_link": False}
+
+        # Get the corresponding list of music to the search text. If the text
+        # is an open spotify link, then attempt to get the music from it.
+        # Otherwise, just search for the text in spotify and get a list of results.
+        if re.match(r'https*://open.spotify.com/', search_text):
+            if spotify_iface.spotify_link_invalid(music_type, search_text):
+                response_dict["invalid_link"] = True
+            else:
+                music = spotify_iface.get_music_from_link(music_type, search_text)
+                response_dict["music_results"] = [music.format_for_response_dict()]
+        elif search_text:
+            music_results = spotify_iface.search_for_music(music_type, search_text, num_results=20)
+            response_dict["music_results"] = [music.format_for_response_dict() for music in music_results]
+
+        return response_dict, 200

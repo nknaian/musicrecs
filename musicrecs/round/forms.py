@@ -7,17 +7,9 @@ from wtforms.validators import DataRequired, Length, ValidationError
 
 from musicrecs import spotify_iface
 
-from musicrecs.enums import MusicType
 from musicrecs.round.helpers import GUESS_LINE_PATTERN, get_guesser_names, get_user_names, get_music_numbers
 from musicrecs.database.models import MAX_USERNAME_LENGTH
 from musicrecs.spotify.item.spotify_playlist import SpotifyPlaylist
-
-
-"""FORM DESCRIPTIONS"""
-
-
-SPOTIFY_TRACK_URL_DESCRIPTION = "(ex: http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6)"
-SPOTIFY_ALBUM_URL_DESCRIPTION = "(ex: https://open.spotify.com/album/3a0UOgDWw2pTajw85QPMiz)"
 
 
 """CUSTOM VALIDATOR CLASSES"""
@@ -29,12 +21,7 @@ class _SpotifyLink(object):
     """
     def __call__(self, form, field):
         if spotify_iface.spotify_link_invalid(form._round.music_type, field.data):
-            if form._round.music_type == MusicType.track:
-                description = SPOTIFY_TRACK_URL_DESCRIPTION
-            elif form._round.music_type == MusicType.album:
-                description = SPOTIFY_ALBUM_URL_DESCRIPTION
-
-            raise ValidationError(f"Invalid spotify {form._round.music_type.name} link ... {description}")
+            raise ValidationError(f"Invalid spotify {form._round.music_type.name} link.")
 
 
 class _NewUserName(object):
@@ -124,21 +111,23 @@ class RoundForm(FlaskForm):
 class TrackrecForm(RoundForm):
     name = StringField('What is your name?', validators=[DataRequired(), _NewUserName()])
     spotify_link = StringField(
-        'Spotify Track URL',
-        description=SPOTIFY_TRACK_URL_DESCRIPTION,
+        'Spotify Track Link',
+        description="Start typing to search for music, or directly input "
+                    "a spotify track link (ex: http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6)",
         validators=[DataRequired(), _SpotifyLink()]
     )
-    submit = SubmitField('Submit Track Recommendation')
+    submit_rec = SubmitField('Submit Track Recommendation')
 
 
 class AlbumrecForm(RoundForm):
     name = StringField('What is your name?', validators=[DataRequired(), _NewUserName()])
     spotify_link = StringField(
-        'Spotify Album URL',
-        description=SPOTIFY_ALBUM_URL_DESCRIPTION,
+        'Spotify Album Link',
+        description="Start typing to search for music, or directly input "
+                    "a spotify album link (ex: https://open.spotify.com/album/3a0UOgDWw2pTajw85QPMiz)",
         validators=[DataRequired(), _SpotifyLink()]
     )
-    submit = SubmitField('Submit Album Recommendation')
+    submit_rec = SubmitField('Submit Album Recommendation')
 
 
 class GuessForm(RoundForm):

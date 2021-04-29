@@ -20,6 +20,9 @@ class SpotifyMusic(SpotifyItem):
     def get_artists_comma_separated(self):
         return ', '.join(artist.name for artist in self.artists)
 
+    def format_for_response_dict(self):
+        return {"music_name": str(self), "music_img_url": self.img_url, "music_link": self.link}
+
     def get_primary_artist(self):
         return self.artists[0]
 

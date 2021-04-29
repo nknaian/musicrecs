@@ -26,12 +26,54 @@
                 <div class="alert alert-danger" role="alert">{{ error }}</div>
             {% endfor %}
 
-            {{ wtf.form_field(rec_form.spotify_link) }}
-            {% for error in rec_form.spotify_link.errors %}
-                <div class="alert alert-danger" role="alert">{{ error }}</div>
-            {% endfor %}
+            {% if round.music_type.name == "album" %}
+                {{ wtf.form_field(rec_form.spotify_link,
+                                  id="spotify_search_bar",
+                                  onkeyup="get_spotify_album_search_results()",
+                                  onpaste="get_spotify_album_search_results()") }}
+            {% elif round.music_type.name == "track" %}
+                {{ wtf.form_field(rec_form.spotify_link,
+                                  id="spotify_search_bar",
+                                  onkeyup="get_spotify_track_search_results()",
+                                  onpaste="get_spotify_track_search_results()") }}
+            {% endif %}
 
-            {{ wtf.form_field(rec_form.submit) }}
+            <div id="music_search_results" style="margin-left: 15px;">
+                {% for i in range(20) %}
+                    <div id="music_result_{{i}}" style="display: none" class="row">
+                        <button type="button" style="border: 0px;" onclick="choose_music({{i}})">
+                            <div class="row bg-dark text-light div_round">
+                                <div class="row">
+                                    <div class="col col-auto">
+                                        <img id="music_result_img_{{i}}" src=""
+                                            alt=""
+                                            class=img_albums>
+                                    </div>
+                                    <div class="col col-auto" id="music_result_name_{{i}}" ></div>
+                                </div>
+                            </div>
+                        </button>
+                    </div>
+                {% endfor %}
+            </div>
+            <div id="spotify_link_form_errors" >
+                {% for error in rec_form.spotify_link.errors %}
+                    <div class="alert alert-danger" role="alert">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div id="music_search_no_results_found" class="alert alert-danger" role="alert" style="display: none">
+                Sorry, no results found.
+            </div>
+            <div id="music_search_invalid_link" class="alert alert-danger" role="alert" style="display: none">
+                Sorry, spotify {{round.music_type.name}} link is invalid
+            </div>
+
+            <div id="submit_rec_button" style="margin-top: 15px;">
+                {{ wtf.form_field(rec_form.submit_rec) }}
+            </div>
         </form>
     </div>
+
+    <!-- Javascript used in this page-->
+    <script type="text/javascript" src="{{url_for('static', filename='js/round/submit_phase.js')}}"></script>
 {% endblock %}
