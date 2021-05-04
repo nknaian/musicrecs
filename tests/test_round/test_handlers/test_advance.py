@@ -31,11 +31,11 @@ class RoundAdvanceTestCase(RoundTestCase):
         add_submission_to_db(round.id, "John Doe", "http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6")
 
         # Mock the search_for_music spotify interface
-        def _mock_search_for_music(*args):
+        def _mock_search_for_music(*args, **kwargs):
             track_mock = Mock(spec=SpotifyTrack)
             track_mock.link = "http://open.spotify.com/track/7GhIk7Il098yCjg4BQjzvb"
 
-            return track_mock
+            return [track_mock]
 
         spotify_iface.search_for_music = Mock(side_effect=_mock_search_for_music)
 
@@ -79,11 +79,11 @@ class RoundAdvanceTestCase(RoundTestCase):
         add_submission_to_db(round.id, "Nick Jones", "https://open.spotify.com/album/3a0UOgDWw2pTajw85QPMiz")
 
         # Mock the search_for_music spotify interface
-        def _mock_search_for_music(*args):
+        def _mock_search_for_music(*args, **kwargs):
             album_mock = Mock(spec=SpotifyAlbum)
             album_mock.link = "https://open.spotify.com/album/5Z9iiGl2FcIfa3BMiv6OIw"
 
-            return album_mock
+            return [album_mock]
 
         spotify_iface.search_for_music = Mock(side_effect=_mock_search_for_music)
 

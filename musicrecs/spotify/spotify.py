@@ -8,7 +8,7 @@ spotify link.
 
 import random
 import copy
-from typing import List, Optional
+from typing import List
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
@@ -18,12 +18,6 @@ from .item.spotify_music import SpotifyMusic, SpotifyAlbum, SpotifyTrack
 from .item.spotify_playlist import SpotifyPlaylist
 from musicrecs.enums import MusicType
 
-"""Popularity is a number that spotify
-assigns to music based on how many listens it's
-getting recently. This threshold filters out
-music that is not popular enough
-"""
-POPULARITY_THRESHOLD = 15
 
 """Maximum number of samples that can be used
 in spotipy's "recommendations" function
@@ -42,34 +36,36 @@ class Spotify:
         self.sp = spotipy.Spotify(
             client_credentials_manager=SpotifyClientCredentials())
 
-    def search_for_music(self, music_type: MusicType, search_term: str) -> Optional[SpotifyMusic]:
+    def search_for_music(self,
+                         music_type: MusicType,
+                         search_term: str,
+                         num_results=5,
+                         popularity_threshold=None) -> List[SpotifyMusic]:
         """Gets spotify music by searching the search term. Filters
         music out that is below the popularity threshold.
 
         If nothing is found it will return None
         """
         # Search for the music type using the search term
-        search = self.sp.search(search_term, type=music_type.name)
+        search = self.sp.search(search_term, type=music_type.name, limit=num_results)
         music_items = search[f'{music_type.name}s']['items']
 
         # Go through the music items brought up in the search
+        spotify_musics = []
         if len(music_items):
             for music_item in music_items:
-                # Get the popularity of the artists for this music item
-                artists_popularity = self._get_artists_popularity(
-                    music_item['artists'])
-
                 # If the popularity is above the threshold, then return
                 # the item
-                if artists_popularity >= POPULARITY_THRESHOLD:
+                if popularity_threshold is None or \
+                        self._get_artists_popularity(music_item['artists']) >= popularity_threshold:
                     if music_type == MusicType.album:
                         if music_item['album_type'] == "album":
-                            return SpotifyAlbum(music_item)
+                            spotify_musics.append(SpotifyAlbum(music_item))
                     elif music_type == MusicType.track:
                         if music_item['type'] == "track":
-                            return SpotifyTrack(music_item)
-        else:
-            return None
+                            spotify_musics.append(SpotifyTrack(music_item))
+
+        return spotify_musics
 
     def recommend_music(self, music_type: MusicType, music_list: List[SpotifyMusic]) -> SpotifyMusic:
         """Gets a spotify recommendation based on a list of spotify music
@@ -186,6 +182,9 @@ class Spotify:
     def _get_artists_popularity(self, artists):
         """Get the popularity of the most popular artist in the list
         of artists
+
+        Popularity is a number that spotify assigns to music
+        based on how many listens it's been getting recently.
         """
         popularity = 0
 

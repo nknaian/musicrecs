@@ -126,7 +126,10 @@ def get_snoozin_rec(round: Round) -> SpotifyMusic:
             search_term = " ".join(
                 rw_gen.get_random_words(num_words)
             )
-            snoozin_rec = spotify_iface.search_for_music(round.music_type, search_term)
+            search_results = spotify_iface.search_for_music(
+                round.music_type, search_term, num_results=1, popularity_threshold=15)
+            if len(search_results):
+                snoozin_rec = search_results[0]
             num_attempts += 1
 
         # Set the round's search term
