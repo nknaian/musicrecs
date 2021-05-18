@@ -156,7 +156,7 @@ def advance(long_id):
     round = Round.query.filter_by(long_id=long_id).first()
 
     # Perform actions that are round phase transition specific
-    if 'advance_to_listen' in request.form:
+    if 'advance_to_listen' in request.form and round.status == RoundStatus.submit:
         # Add snoozin's rec:
         new_submission = Submission(
             spotify_link=get_snoozin_rec(round).link,
@@ -169,7 +169,7 @@ def advance(long_id):
         round.status = RoundStatus.listen
         db.session.commit()
 
-    elif 'advance_to_revealed' in request.form:
+    elif 'advance_to_revealed' in request.form and round.status == RoundStatus.listen:
         round.status = RoundStatus.revealed
         db.session.commit()
 
