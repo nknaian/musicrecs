@@ -12,7 +12,7 @@ from musicrecs.errors.exceptions import MusicrecsAlert, MusicrecsError
 from . import bp
 from .forms import GuessForm, TrackrecForm, AlbumrecForm, PlaylistForm
 from .helpers import process_guess_form, get_snoozin_rec, get_shuffled_music_submissions, \
-    get_abs_round_link, create_playlist
+    get_abs_round_link, create_playlist, get_user_names, get_guesser_names
 
 
 @bp.route('/round/<string:long_id>', methods=["GET", "POST"])
@@ -103,6 +103,9 @@ def listen(long_id):
 
     # Process guess submissions
     guess_form = GuessForm(round)
+
+    guess_form.name.choices.extend(list(set(get_user_names(round)) - set(get_guesser_names(round))))
+
     if guess_form.submit_guess.data and guess_form.validate():
         # Add the user's guesses within the form to the database
         process_guess_form(round, guess_form)
@@ -111,6 +114,7 @@ def listen(long_id):
         flash("Successfully submitted your guess", "success")
 
         return redirect(url_for('round.listen', long_id=round.long_id))
+
     elif guess_form.errors:
         flash("There were errors in your guess", "warning")
     else:

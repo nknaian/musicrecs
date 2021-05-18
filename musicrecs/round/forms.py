@@ -2,14 +2,20 @@ import re
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
+from wtforms.fields.core import SelectField
 from wtforms.fields.simple import TextAreaField
 from wtforms.validators import DataRequired, Length, ValidationError
 
 from musicrecs import spotify_iface
 
-from musicrecs.round.helpers import GUESS_LINE_PATTERN, get_guesser_names, get_user_names, get_music_numbers
+from musicrecs.round.helpers import GUESS_LINE_PATTERN, get_user_names, get_music_numbers
 from musicrecs.database.models import MAX_USERNAME_LENGTH
 from musicrecs.spotify.item.spotify_playlist import SpotifyPlaylist
+
+
+"""CONSTANTS"""
+
+GUESSER_NAME_PLACEHOLDER = "Please select your name"
 
 
 """CUSTOM VALIDATOR CLASSES"""
@@ -48,10 +54,8 @@ class _NewUserName(object):
 class _GuessUserName(object):
     """Validates that the field is user_name that hasn't guessed yet"""
     def __call__(self, form, field):
-        if field.data not in get_user_names(form._round):
-            raise ValidationError(f"No user named {field.data} submitted a rec!")
-        elif field.data in get_guesser_names(form._round):
-            raise ValidationError(f"A guess from user name {field.data} has already been submitted!")
+        if field.data == GUESSER_NAME_PLACEHOLDER:
+            raise ValidationError(GUESSER_NAME_PLACEHOLDER)
 
 
 class _GuessField(object):
@@ -131,7 +135,7 @@ class AlbumrecForm(RoundForm):
 
 
 class GuessForm(RoundForm):
-    name = StringField('What is your name?', validators=[DataRequired(), _GuessUserName()])
+    name = SelectField(choices=[GUESSER_NAME_PLACEHOLDER], validators=[_GuessUserName()])
     guess_field = TextAreaField(
         'Pair each recommender with their rec number',
         render_kw={"rows": 3},
