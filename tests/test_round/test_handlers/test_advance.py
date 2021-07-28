@@ -28,7 +28,7 @@ class RoundAdvanceTestCase(RoundTestCase):
         )
 
         # Add a submission to the round
-        add_submission_to_db(round.id, "John Doe", "http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6")
+        add_submission_to_db(round.id, None, "John Doe", "http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6")
 
         # Mock the search_for_music spotify interface
         def _mock_search_for_music(*args, **kwargs):
@@ -52,7 +52,7 @@ class RoundAdvanceTestCase(RoundTestCase):
         )
 
         # Add a submission to the round
-        add_submission_to_db(round.id, "Dory Johnson", "http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6")
+        add_submission_to_db(round.id, None, "Dory Johnson", "http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6")
 
         # Mock the recommend_music spotify interface
         def _mock_recommend_music(*args):
@@ -76,7 +76,7 @@ class RoundAdvanceTestCase(RoundTestCase):
         )
 
         # Add a submission to the round
-        add_submission_to_db(round.id, "Nick Jones", "https://open.spotify.com/album/3a0UOgDWw2pTajw85QPMiz")
+        add_submission_to_db(round.id, None, "Nick Jones", "https://open.spotify.com/album/3a0UOgDWw2pTajw85QPMiz")
 
         # Mock the search_for_music spotify interface
         def _mock_search_for_music(*args, **kwargs):
@@ -100,7 +100,7 @@ class RoundAdvanceTestCase(RoundTestCase):
         )
 
         # Add a submission to the round
-        add_submission_to_db(round.id, "Jonie Nixon", "https://open.spotify.com/album/3a0UOgDWw2pTajw85QPMiz")
+        add_submission_to_db(round.id, None, "Jonie Nixon", "https://open.spotify.com/album/3a0UOgDWw2pTajw85QPMiz")
 
         # Mock the recommend_music spotify interface
         def _mock_recommend_music(*args):
@@ -124,7 +124,7 @@ class RoundAdvanceTestCase(RoundTestCase):
         )
 
         # Add a submission to the round
-        add_submission_to_db(round.id, "John Doe", "http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6")
+        add_submission_to_db(round.id, None, "John Doe", "http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6")
 
         # Run the advance to revealed test
         self._test_advance_to_revealed(round)
@@ -139,7 +139,7 @@ class RoundAdvanceTestCase(RoundTestCase):
         )
 
         # Add a submission to the round
-        add_submission_to_db(round.id, "Nick Jones", "https://open.spotify.com/album/3a0UOgDWw2pTajw85QPMiz")
+        add_submission_to_db(round.id, None, "Nick Jones", "https://open.spotify.com/album/3a0UOgDWw2pTajw85QPMiz")
 
         # Run the advance to revealed test
         self._test_advance_to_revealed(round)

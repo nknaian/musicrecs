@@ -1,6 +1,6 @@
 import secrets
 
-from musicrecs.database.models import Guess, Round, Submission
+from musicrecs.database.models import Guess, Round, Submission, User
 from musicrecs.enums import RoundStatus
 
 from musicrecs import db
@@ -25,15 +25,16 @@ def add_round_to_db(description, music_type, snoozin_rec_type, status=RoundStatu
     return round
 
 
-def add_submission_to_db(round_id, user_name, spotify_link):
+def add_submission_to_db(round_id, user_id, user_name, spotify_link):
     """Add a submission to the database with the given properties
 
     Return the newly added submission object
     """
     submission = Submission(
         spotify_link=spotify_link,
+        user_id=user_id,
         user_name=user_name,
-        round_id=round_id
+        round_id=round_id,
     )
     db.session.add(submission)
     db.session.commit()
@@ -53,6 +54,20 @@ def add_guess_to_db(submission_id, user_name, music_num, correct):
     db.session.commit()
 
     return guess
+
+
+def add_user_to_db(spotify_user_id):
+    user = User(
+        spotify_user_id=spotify_user_id
+    )
+    db.session.add(user)
+    db.session.commit()
+
+    return user
+
+
+def lookup_user_in_db(spotify_user_id) -> User:
+    return User.query.filter_by(spotify_user_id=spotify_user_id).first()
 
 
 """PRIVATE FUNCTIONS"""

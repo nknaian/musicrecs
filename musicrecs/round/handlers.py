@@ -1,3 +1,4 @@
+from musicrecs.user.helpers import current_user_id
 import re
 from flask import render_template, redirect, url_for, flash
 from flask.globals import request
@@ -11,8 +12,8 @@ from musicrecs.errors.exceptions import MusicrecsAlert, MusicrecsError
 
 from . import bp
 from .forms import GuessForm, TrackrecForm, AlbumrecForm, PlaylistForm
-from .helpers import process_guess_form, get_snoozin_rec, get_shuffled_music_submissions, \
-    get_abs_round_link, create_playlist, get_user_names, get_guesser_names
+from .helpers import get_current_user_submission, process_guess_form, get_snoozin_rec, \
+    create_playlist, get_user_names, get_guesser_names
 
 
 @bp.route('/round/<string:long_id>', methods=["GET", "POST"])
@@ -48,10 +49,19 @@ def submit(long_id):
     else:
         raise MusicrecsError(f"Unknown music type {round.music_type}")
 
+    # Get the currently logged in user's submission
+    current_user_submission = get_current_user_submission(round)
+
     # Process the submission form
     if rec_form.validate_on_submit():
+        # Change the user's submission
+        if current_user_submission is not None:
+            current_user_submission.user_name = rec_form.name.data
+            current_user_submission.spotify_link = rec_form.spotify_link.data
+            db.session.commit()
         # Add the submission to the database
-        add_submission_to_db(round.id, rec_form.name.data, rec_form.spotify_link.data)
+        else:
+            add_submission_to_db(round.id, current_user_id(), rec_form.name.data, rec_form.spotify_link.data)
 
         # Alert the user that the form was successfully submitted
         flash("Successfully submitted your recommendation: "
@@ -64,10 +74,22 @@ def submit(long_id):
     elif rec_form.errors:
         flash("There were errors in your rec submission", "warning")
 
+    # Deal with the current user's submission
+    current_user_music = None
+    if current_user_submission is not None:
+        # Get music object for the user's submssion
+        current_user_music = spotify_iface.get_music_from_link(round.music_type, current_user_submission.spotify_link)
+
+        # Change the submit button text to reflect that this will change their submission
+        rec_form.submit_rec.label.text = rec_form.submit_rec.label.text.replace("Submit", "Change")
+
+        # Pre-fill form with current choice for user name
+        rec_form.name.data = current_user_submission.user_name
+
     return render_template('round/submit_phase.html',
-                           round_link=get_abs_round_link(round),
                            rec_form=rec_form,
-                           round=round)
+                           round=round,
+                           current_user_music=current_user_music)
 
 
 @bp.route('/round/<string:long_id>/listen', methods=["GET", "POST"])
@@ -123,9 +145,7 @@ def listen(long_id):
         guess_form.guess_field.data = "\n".join([f"{submission.user_name}: " for submission in round.submissions])
 
     return render_template('round/listen_phase.html',
-                           round_link=get_abs_round_link(round),
                            round=round,
-                           music_submissions=get_shuffled_music_submissions(round),
                            playlist_form=playlist_form,
                            playlist=playlist,
                            guess_form=guess_form)
@@ -148,9 +168,7 @@ def revealed(long_id):
         playlist = None
 
     return render_template('round/revealed_phase.html',
-                           round_link=get_abs_round_link(round),
                            round=round,
-                           music_submissions=get_shuffled_music_submissions(round),
                            playlist=playlist)
 
 

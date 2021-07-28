@@ -2,7 +2,7 @@
 account, using the spotipy authorization code flow.
 
 If a function is called that requires user authentication, then
-the 'ExternalAuthFailure' exception shall be raised, containing
+the 'SpotifyUserAuthFailure' exception shall be raised, containing
 the authorization url that should be visited to log the user in
 to spotify and authorize the musicrecs app. It is the caller's
 responsibility to catch this exception and redirect to the authorization
@@ -18,8 +18,6 @@ from spotipy.oauth2 import SpotifyOAuth
 
 from flask import session
 
-from musicrecs.external_auth.exceptions import ExternalAuthFailure
-
 from .item.spotify_music import SpotifyTrack
 from .item.spotify_playlist import SpotifyPlaylist
 
@@ -31,13 +29,31 @@ SCOPE = 'playlist-modify-public'
 CACHE_FOLDER = '.spotify_user_caches/'
 
 
+'''EXCEPTIONS'''
+
+
+class SpotifyUserAuthFailure(Exception):
+    def __init__(self, auth_url) -> None:
+        self.__auth_url = auth_url
+
+    @property
+    def auth_url(self):
+        return self.__auth_url
+
+    @auth_url.setter
+    def auth_url(self, auth_url):
+        self.__auth_url = auth_url
+
+
 '''PUBLIC AUTH FUNCTIONS'''
 
 
 def get_auth_url(show_dialog=False):
     """Get url for user to visit to sign in to spotify
-    and give permission to musicrecs (permission only
-    asked for on first authentication from a user)
+    and give permission to musicrecs. Permission is only
+    asked for on first authentication from a user by default. To
+    show the dialog box (which also shows the "not you" button),
+    then set `show_dialog` to True.
     """
     return _get_auth_manager(show_dialog=show_dialog).get_authorize_url()
 
@@ -47,29 +63,35 @@ def auth_new_user(code):
     _get_auth_manager().get_access_token(code)
 
 
-def not_you():
-    """A bit of a hacky solution, but the best simple one that
-    seems available. This function will remove the session and
-    spotify cached tokens and then return the authorization url
-    with dialog shown. The permission dialog being shown gives
-    the user the oppertunity to login as a different user through
-    the 'not_you' button (thus the name of this function).
-
+def logout():
+    """Remove the cache code for this user. This doesn't 'unauthenticate'
+    the user, but it will force an `SpotifyUserAuthFailure` the next time
+    that `_get_sp_instance` is called.
     """
+    # Remove cache code for this user
     if os.path.exists(_session_cache_path()):
         os.remove(_session_cache_path())
-        session.clear()
-    return get_auth_url(show_dialog=True)
 
 
 '''PUBLIC FUNCTIONS'''
 
 
+def is_authenticated():
+    """Check whether thte user is authenticated with a spotify"""
+    try:
+        _get_sp_instance()
+    except SpotifyUserAuthFailure:
+        return False
+
+    return True
+
+
+def get_user_id():
+    return _get_sp_instance().me()["id"]
+
+
 def get_current_track():
     """Return information about the track the user is currently playing
-
-    If the current user is not authenticated, then a
-    'ExternalAuthFailure' exception will be raised.
     """
     track_info = _get_sp_instance().current_user_playing_track()
     if track_info is not None:
@@ -148,7 +170,7 @@ def _get_sp_instance():
     if auth_manager.get_cached_token():
         return spotipy.Spotify(auth_manager=auth_manager)
     else:
-        raise ExternalAuthFailure(get_auth_url())
+        raise SpotifyUserAuthFailure(get_auth_url(show_dialog=True))
 
 
 def _get_auth_manager(show_dialog=False):

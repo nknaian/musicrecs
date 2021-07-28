@@ -4,7 +4,7 @@
     <!-- Construct required javascript function args -->
     <head>
         <script>
-            var round_link = "{{round_link}}";
+            var round_link = "{{get_abs_round_link(round)}}";
         </script>
     </head>
 
@@ -26,35 +26,37 @@
         </div>
     </div>
     <div class="bg-light div_main">
-        <h4>Round description</h4>
-        <div class="text-center">
-            {% for line in round.description.split('\n') %}
-                {{ line }}<br>
-            {% endfor %}
-        </div>
-    </div>
-    <div class="bg-light div_main">
-        <h4>Snoozin recommendation type</h4>
-        <div class="row bg-dark text-light div_round">
-            {{ round.snoozin_rec_type.name }}
-        </div>
-    </div>
-
-    {% if round.submissions %}
-        <div class="bg-light div_main">
-            <h4>The recommenders</h4>
-            {% for submission in round.submissions %}
-                <div class="row bg-dark text-light div_round" style="min-width: 125px;">
-                    <div style="text-align: center;">{{ submission.user_name }}</div>
-                    {% if submission.guesses %}
-                        <div class="align-bottom text-right font-italic" style="font-size: small; color: yellow;">
-                            guessed
-                        </div>
-                    {% endif %}
+        <h4>Round Info</h4>
+        <div class="row justify-content-center">
+            <div class="col-lg-6 col-sm-12 div_round_info">
+                <h6>Description</h6>
+                {% for line in round.description.split('\n') %}
+                    {{ line }}<br>
+                {% endfor %}
+            </div>
+            {% if round.submissions %}
+                <div class="col-lg-6 col-sm-12 div_round_info">
+                        <h6>The recommenders</h6>
+                        {% for submission in round.submissions %}
+                            
+                            {% if submission.guesses %}
+                                <span class="div_recommender_name">{{submission.user_name}}<span style="font-size: x-small; font-style: italic; vertical-align: sub; color: darkgreen">guessed</span></span>
+                            {% else %}
+                                <span class="div_recommender_name">{{submission.user_name}}</span>
+                            {% endif %}
+                        {% endfor %}
                 </div>
-            {% endfor %}
+            {% endif %}
+            <div class="col-lg-6 col-sm-12 div_round_info">
+                <h6>Snoozin recommendation type</h6>
+                {{ round.snoozin_rec_type.name }}
+            </div>
+            <div class="col-lg-6 col-sm-12 div_round_info">
+                <h6>Date created</h6>
+                {{ round_created_date(round) }}
+            </div>
         </div>
-    {% endif %}
+    </div>
 
     <div class="text-left">
         {% block round_content %} {% endblock %}

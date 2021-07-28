@@ -11,25 +11,43 @@
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 
         <!-- Musicrecs CSS -->
-        <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}?v=1.1">
+        <link rel="stylesheet" href="{{url_for('static', filename='style.css')}}?v=1.2">
 
         <title>{% block title %} {% endblock %}</title>
     </head>
     <body>
-        <nav class="navbar navbar-expand-md navbar-light bg-light">
+        <nav class="navbar navbar-light bg-light">
             <a class="navbar-brand" href="{{ url_for('main.index')}}"><img src="/static/Snoozyphones_Page.png" class="navbar_logo"></a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav">
-                <li class="nav-item active">
-                    <a class="nav-link" href="{{ url_for('main.index')}}#new_round_form">New Round</a>
-                </li>
-                <li class="nav-item active">
-                    <a class="nav-link" href="{{ url_for('main.index')}}#about">About</a>
-                </li>
-                </ul>
+            <a class="nav-item active">
+                <a class="nav-link" href="{{ url_for('main.index')}}#new_round_form" style="color: black;">New Round</a>
+            </a>
+            <a class="nav-item active">
+                <a class="nav-link" href="{{ url_for('main.index')}}#about" style="color: black;">About</a>
+            </a>
+            <a class="navbar-nav ml-auto">
+                {% if is_user_logged_in() %}
+                    <a class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;">
+                            {{get_user_display_name()}}
+                        </a>
+                        <div class="dropdown-menu dropdown-menu-right" style="width: min-content;" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item" href="{{ url_for('user.profile') }}">Profile</a>
+                            <a class="dropdown-item" href="{{ url_for('user.rounds', music_type='track') }}">Your trackrecs</a>
+                            <a class="dropdown-item" href="{{ url_for('user.rounds', music_type='album') }}">Your albumrecs</a>
+                            <div class="dropdown-divider"></div>
+                            <a class="dropdown-item" style="color: blue;" href="{{url_for('user.logout')}}">Log out</a>
+                        </div>
+                    </a>
+                {% else %}
+                    <a class="nav-item active">
+                        <form
+                            method="post"
+                            action="{{ url_for('user.login')}}";>
+                            <input class="btn btn-primary btn_main" type="submit" name="login_with_spotify" value="Log in">
+                        </form>
+                    </a>
+                {% endif %}
+            </a>
             </div>
         </nav>
         <div class="container-fluid" style="margin-top: 20px; margin-bottom: 20px;">

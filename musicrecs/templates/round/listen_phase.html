@@ -14,19 +14,17 @@
     {% if playlist %}
         <div class="bg-light div_round_content">
             <h4>The playlist</h4>
-            <a href="{{playlist.link}}">
-                <div class="row bg-dark text-light div_round">
-                    <div class="row">
-                        {%if playlist.img_url %}
-                            <div class="col col-auto">
-                                <img src="{{playlist.img_url}}"
-                                    alt="{{playlist.name}}"
-                                    class="img_playlist">
-                            </div>
-                        {% endif %}
-                        <div class="col div_listen">
-                            <span class="align-middle">{{playlist.name}}</span>
+            <a class="bg-dark text-light div_round_item btn" role="button" href="{{playlist.link}}">
+                <div class="row">
+                    {%if playlist.img_url %}
+                        <div class="col col-auto">
+                            <img src="{{playlist.img_url}}"
+                                alt="{{playlist.name}}"
+                                class="img_playlist">
                         </div>
+                    {% endif %}
+                    <div class="col div_listen">
+                        <span class="align-middle">{{playlist.name}}</span>
                     </div>
                 </div>
             </a>
@@ -53,22 +51,20 @@
 
     <div class="bg-light div_round_content">
         <h4> The {{round.music_type.name}}s</h4>
-        {% for user_name, music in music_submissions.items() %}
-            <a href="{{music.link}}">
-                <div class="row bg-dark text-light div_round">
-                    <div class="row">
-                        <div class="col col-auto">
-                            <img src="{{music.img_url}}"
-                                alt="{{music.name}}"
-                                class=img_albums>
-                        </div>
-                        <div class="col div_listen">
-                            <span class="align-middle"><b>{{music.name}}</b> by {{music.get_artists_comma_separated()}}</span>
-                        </div>
+        {% for user_name, music in get_shuffled_music_submissions(round).items() %}
+            <a class="bg-dark text-light div_round_item btn" role="button" href="{{music.link}}">
+                <div class="row">
+                    <div class="col col-auto">
+                        <img src="{{music.img_url}}"
+                            alt="{{music.name}}"
+                            class=img_albums>
                     </div>
-
-                    <div class="align-bottom text-right font-italic">{{loop.index0}}</div>
+                    <div class="col div_listen">
+                        <span class="align-middle"><b>{{music.name}}</b> by {{music.get_artists_comma_separated()}}</span>
+                    </div>
                 </div>
+
+                <div class="align-bottom text-right font-italic">{{loop.index0}}</div>
             </a>
         {% endfor %}
     </div>

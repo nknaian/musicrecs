@@ -16,6 +16,24 @@
 {% endblock %}
 
 {% block round_content %}
+    {% if current_user_music %}
+        <div class="bg-light div_round_content">
+            <h4>Your current submission</h4>
+            <a class="bg-dark text-light div_round_item btn" role="button" href="{{current_user_music.link}}">
+                <div class="row">
+                    <div class="col col-auto">
+                        <img src="{{current_user_music.img_url}}"
+                            alt="{{current_user_music.name}}"
+                            class=img_albums>
+                    </div>
+                    <div class="col div_listen">
+                        <span class="align-middle"><b>{{current_user_music.name}}</b> by {{current_user_music.get_artists_comma_separated()}}</span>
+                    </div>
+                </div>
+            </a>
+        </div>
+    {% endif %}
+
     <div class="bg-light div_round_content">
         <h4>Submit music to the round</h4>
         <form class="form form-horizontal" method="post" role="form">
@@ -41,16 +59,14 @@
             <div id="music_search_results" style="margin-left: 15px;">
                 {% for i in range(20) %}
                     <div id="music_result_{{i}}" style="display: none" class="row">
-                        <button type="button" style="border: 0px;" onclick="choose_music({{i}})">
-                            <div class="row bg-dark text-light div_round">
-                                <div class="row">
-                                    <div class="col col-auto">
-                                        <img id="music_result_img_{{i}}" src=""
-                                            alt=""
-                                            class=img_albums>
-                                    </div>
-                                    <div class="col col-auto" id="music_result_name_{{i}}" ></div>
+                        <button class="bg-dark text-light div_round_item btn" type="button" onclick="choose_music({{i}})">
+                            <div class="row">
+                                <div class="col col-auto">
+                                    <img id="music_result_img_{{i}}" src=""
+                                        alt=""
+                                        class=img_albums>
                                 </div>
+                                <div class="col col-auto" id="music_result_name_{{i}}" ></div>
                             </div>
                         </button>
                     </div>

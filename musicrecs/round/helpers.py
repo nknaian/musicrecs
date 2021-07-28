@@ -1,13 +1,13 @@
 import random
 import re
-from typing import Dict, List, Set
+from typing import Dict, List, Set, Union
 
 from flask import flash, url_for
 from flask.globals import request
 
 from musicrecs import db
 from musicrecs import spotify_iface
-from musicrecs.database.models import Round
+from musicrecs.database.models import Round, Submission
 from musicrecs.spotify import spotify_user
 from musicrecs.database.helpers import add_guess_to_db
 import musicrecs.random_words.random_words as random_words
@@ -15,7 +15,8 @@ from musicrecs.spotify.item.spotify_music import SpotifyMusic
 from musicrecs.spotify.item.spotify_playlist import SpotifyPlaylist
 from musicrecs.enums import SnoozinRecType
 from musicrecs.errors.exceptions import MusicrecsAlert, MusicrecsError
-from musicrecs.external_auth.decorators import retry_after_auth
+from musicrecs.user.decorators import retry_after_auth
+from musicrecs.user.helpers import current_user_id
 
 
 """CONSTANTS"""
@@ -176,6 +177,43 @@ def get_shuffled_music_list(round: Round) -> List[SpotifyMusic]:
 def get_shuffled_user_name_list(round: Round) -> List[str]:
     """Get a list of the user names in the shuffled music order"""
     return list(get_shuffled_music_submissions(round).keys())
+
+
+def is_current_user_in_round(round: Round) -> bool:
+    user_id = current_user_id()
+
+    if user_id is not None:
+        for submission in round.submissions:
+            if submission.user_id == user_id:
+                return True
+
+    return False
+
+
+def get_current_user_submission(round: Round) -> Union[Submission, None]:
+    user_id = current_user_id()
+    if user_id is not None:
+        return next(
+            (submission for submission in round.submissions if submission.user_id == user_id),
+            None)
+
+    return None
+
+
+def get_submission_by_user_id(round: Round, user_id) -> Union[Submission, None]:
+    return next(
+        (submission for submission in round.submissions if submission.user_id == user_id),
+        None)
+
+
+def get_submission_by_user_name(round: Round, user_name: str) -> Union[Submission, None]:
+    return next(
+        (submission for submission in round.submissions if submission.user_name == user_name),
+        None)
+
+
+def round_created_date(round) -> str:
+    return str(round.created).split(" ")[0]
 
 
 """PRIVATE FUNCTIONS"""

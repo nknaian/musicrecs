@@ -8,7 +8,7 @@ from wtforms.validators import DataRequired, Length, ValidationError
 
 from musicrecs import spotify_iface
 
-from musicrecs.round.helpers import GUESS_LINE_PATTERN, get_user_names, get_music_numbers
+from musicrecs.round.helpers import GUESS_LINE_PATTERN, get_user_names, get_music_numbers, get_current_user_submission
 from musicrecs.database.models import MAX_USERNAME_LENGTH
 from musicrecs.spotify.item.spotify_playlist import SpotifyPlaylist
 
@@ -29,6 +29,9 @@ class _SpotifyLink(object):
         if spotify_iface.spotify_link_invalid(form._round.music_type, field.data):
             raise ValidationError(f"Invalid spotify {form._round.music_type.name} link.")
 
+        # Shorten the field to the base spotify link
+        field.data = spotify_iface.get_music_from_link(form._round.music_type, field.data).link
+
 
 class _NewUserName(object):
     """Makes sure that the field is a valid new username.
@@ -42,12 +45,16 @@ class _NewUserName(object):
         # Strip beginning and trailing whitespace from the user name
         field.data = field.data.strip()
 
+        # Get the current user's user_name in the round
+        current_user_submission = get_current_user_submission(form._round)
+        current_user_user_name = current_user_submission.user_name if current_user_submission is not None else None
+
         # Validate
         if len(field.data) > MAX_USERNAME_LENGTH:
             raise ValidationError(f'Name too long, must be fewer than {MAX_USERNAME_LENGTH} characters')
         elif field.data.lower() == "snoozin":
             raise ValidationError('This town is only big enough for one snoozin...')
-        elif field.data in get_user_names(form._round):
+        elif field.data in get_user_names(form._round) and field.data != current_user_user_name:
             raise ValidationError("This name already is taken already for the round!")
 
 

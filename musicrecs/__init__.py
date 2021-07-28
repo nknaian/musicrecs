@@ -44,11 +44,15 @@ def create_app(config_class=Config):
     from musicrecs.round import bp as round_bp
     app.register_blueprint(round_bp)
 
-    from musicrecs.external_auth import bp as external_auth_bp
-    app.register_blueprint(external_auth_bp)
+    from musicrecs.user import bp as user_bp
+    app.register_blueprint(user_bp)
 
     from musicrecs.errors import bp as errors_bp
     app.register_blueprint(errors_bp)
+
+    if app.config["TESTING"]:
+        from musicrecs.test import bp as test_bp
+        app.register_blueprint(test_bp)
 
     # Create bootstrap flask app
     Bootstrap(app)

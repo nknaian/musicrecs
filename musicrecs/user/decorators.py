@@ -2,7 +2,7 @@ from functools import wraps
 
 from flask import session
 
-from .exceptions import ExternalAuthFailure
+from musicrecs.spotify.spotify_user import SpotifyUserAuthFailure
 
 
 def retry_after_auth():
@@ -16,8 +16,8 @@ def retry_after_auth():
             try:
                 return func(*args, **kwargs)
             # Save the function information and re-raise exception
-            except ExternalAuthFailure as e:
-                session["external_auth_retry_func_info"] = {
+            except SpotifyUserAuthFailure as e:
+                session["user_retry_func_info"] = {
                     "qualname": func.__qualname__,
                     "module": func.__module__,
                     "args": args,

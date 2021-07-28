@@ -9,6 +9,7 @@ from musicrecs.errors.exceptions import MusicrecsError
 '''Storage Constants'''
 
 MAX_SPOTIFY_LINK_LENGTH = 100
+MAX_SPOTIFY_USER_ID_LENGTH = 50
 MAX_USERNAME_LENGTH = 50
 MAX_LONG_ID_LENGTH = 50
 
@@ -18,14 +19,13 @@ MAX_LONG_ID_LENGTH = 50
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
-    email = db.Column(db.String(50), unique=True, nullable=False)
+    spotify_user_id = db.Column(db.String(MAX_SPOTIFY_USER_ID_LENGTH), unique=True, nullable=False)
 
     submissions = db.relationship('Submission', backref=db.backref('user', lazy=True))
     guesses = db.relationship('Guess', backref=db.backref('user', lazy=True))
 
     def __repr__(self):
-        return '<User %r>' % self.username
+        return '<User %r>' % self.id
 
 
 class Submission(db.Model):

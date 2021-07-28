@@ -25,9 +25,9 @@ class RoundRevealedTestCase(RoundTestCase):
         )
 
         # Add a couple submissions to the round
-        add_submission_to_db(round.id, "Nick Jones", "https://open.spotify.com/album/3a0UOgDWw2pTajw85QPMiz")
-        add_submission_to_db(round.id, "Jonie Nixon", "https://open.spotify.com/album/1vz94WpXDVYIEGja8cjFNa")
-        add_submission_to_db(round.id, "snoozin", "https://open.spotify.com/album/5Z9iiGl2FcIfa3BMiv6OIw")
+        add_submission_to_db(round.id, None, "Nick Jones", "https://open.spotify.com/album/3a0UOgDWw2pTajw85QPMiz")
+        add_submission_to_db(round.id, None, "Jonie Nixon", "https://open.spotify.com/album/1vz94WpXDVYIEGja8cjFNa")
+        add_submission_to_db(round.id, None, "snoozin", "https://open.spotify.com/album/5Z9iiGl2FcIfa3BMiv6OIw")
 
         # Get the correct shuffled user name order
         shuffled_user_names = get_shuffled_user_name_list(round)
@@ -63,9 +63,9 @@ class RoundRevealedTestCase(RoundTestCase):
         )
 
         # Add a few submissions to the round
-        add_submission_to_db(round.id, "John Doe", "http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6")
-        add_submission_to_db(round.id, "Dory Johnson", "https://open.spotify.com/track/354K3xQPgALQEOiIYzAMat")
-        add_submission_to_db(round.id, "snoozin", "http://open.spotify.com/track/7GhIk7Il098yCjg4BQjzvb")
+        add_submission_to_db(round.id, None, "John Doe", "http://open.spotify.com/track/6rqhFgbbKwnb9MLmUQDhG6")
+        add_submission_to_db(round.id, None, "Dory Johnson", "https://open.spotify.com/track/354K3xQPgALQEOiIYzAMat")
+        add_submission_to_db(round.id, None, "snoozin", "http://open.spotify.com/track/7GhIk7Il098yCjg4BQjzvb")
 
         # Get the correct shuffled user name order
         shuffled_user_names = get_shuffled_user_name_list(round)

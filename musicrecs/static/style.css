@@ -30,13 +30,11 @@ h5 {
     margin-bottom: 10px;
 }
 
-.div_round {
-    padding: 10px;
+.div_round_info {
     margin-top: 10px;
     margin-bottom: 10px;
-    margin-left: 10px;
-    margin-right: 10px;
-    display: inline-block;
+    text-align: center;
+    font-size: small;
 }
 
 .div_round_content {
@@ -45,6 +43,13 @@ h5 {
     margin-bottom: 10px;
 }
 
+.div_round_item {
+    padding: 10px;
+    margin: 10px;
+    display: inline-block;
+}
+
+
 .div_round_revealed_music_user_name {
     text-align: center;
     font-weight: bold;
@@ -52,12 +57,19 @@ h5 {
     margin-bottom: 10px;
 }
 
+.div_recommender_name {
+    margin: 5px;
+    padding: 5px;
+    border: 1px solid gray;
+    background-color: lightgray;
+    border-radius: 5px;
+    display: inline-block;
+}
 
 .img_albums{
     width: {{music.IMG_DIMEN}}px;
     height: {{music.IMG_DIMEN}}px;
     border: 0;
-
 }
 
 .img_playlist {
