@@ -1,5 +1,6 @@
 flake8
 python-dotenv
+pyngrok
 Flask
 Flask-sqlalchemy
 Flask-WTF
