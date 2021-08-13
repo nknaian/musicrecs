@@ -16,18 +16,20 @@
         <title>{% block title %} {% endblock %}</title>
     </head>
     <body>
-        <nav class="navbar navbar-light bg-light">
+        <nav class="navbar navbar-expand navbar-light bg-light">
             <a class="navbar-brand" href="{{ url_for('main.index')}}"><img src="/static/Snoozyphones_Page.png" class="navbar_logo"></a>
-            <a class="nav-item active">
-                <a class="nav-link" href="{{ url_for('main.index')}}#new_round_form" style="color: black;">New Round</a>
-            </a>
-            <a class="nav-item active">
-                <a class="nav-link" href="{{ url_for('main.index')}}#about" style="color: black;">About</a>
-            </a>
-            <a class="navbar-nav ml-auto">
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav">
+                <li class="nav-item active">
+                    <a class="nav-link" href="{{ url_for('main.index')}}#new_round_form">New Round</a>
+                </li>
+                </ul>
                 {% if is_user_logged_in() %}
-                    <a class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;">
+                    <a class="nav-item dropdown ml-auto">
+                        <a class="nav-link dropdown-toggle text-wrap" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" style="color: black;">
                             {{get_user_display_name()}}
                         </a>
                         <div class="dropdown-menu dropdown-menu-right" style="width: min-content;" aria-labelledby="navbarDropdown">
@@ -39,7 +41,7 @@
                         </div>
                     </a>
                 {% else %}
-                    <a class="nav-item active">
+                    <a class="nav-item active ml-auto">
                         <form
                             method="post"
                             action="{{ url_for('user.login')}}";>
@@ -47,7 +49,6 @@
                         </form>
                     </a>
                 {% endif %}
-            </a>
             </div>
         </nav>
         <div class="container-fluid" style="margin-top: 20px; margin-bottom: 20px;">
