@@ -89,7 +89,7 @@ class UserLoginTestCase(UserTestCase):
 
     def test_login_user(self):
         # Add a fake user to the database
-        add_user_to_db(self.DUMMY_USER_SP_ID)
+        add_user_to_db(self.DUMMY_USER_SP_ID, self.DUMMY_USER_DISPLAY_NAME)
 
         # Visit main page. Verify that the text 'Log in' is on the page
         response = self.client.get(url_for('main.index'))

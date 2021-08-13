@@ -56,9 +56,10 @@ def add_guess_to_db(submission_id, user_name, music_num, correct):
     return guess
 
 
-def add_user_to_db(spotify_user_id):
+def add_user_to_db(spotify_user_id, display_name):
     user = User(
-        spotify_user_id=spotify_user_id
+        spotify_user_id=spotify_user_id,
+        display_name=display_name
     )
     db.session.add(user)
     db.session.commit()

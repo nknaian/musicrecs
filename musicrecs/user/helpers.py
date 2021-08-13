@@ -16,7 +16,7 @@ def login_or_register_user() -> None:
 
     # Add new user to database if they are not found
     if user is None:
-        add_user_to_db(spotify_user_id)
+        add_user_to_db(spotify_user_id, spotify_user.get_user_display_name())
 
 
 def is_user_logged_in() -> bool:
@@ -40,4 +40,7 @@ def current_user_id() -> Union[int, None]:
 
 
 def get_user_display_name() -> str:
-    return spotify_user.get_user_display_name()
+    if is_user_logged_in():
+        return lookup_user_in_db(spotify_user.get_user_id()).display_name
+
+    return None

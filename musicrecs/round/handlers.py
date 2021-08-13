@@ -1,4 +1,4 @@
-from musicrecs.user.helpers import current_user_id
+from musicrecs.user.helpers import current_user_id, get_user_display_name
 import re
 from flask import render_template, redirect, url_for, flash
 from flask.globals import request
@@ -85,6 +85,9 @@ def submit(long_id):
 
         # Pre-fill form with current choice for user name
         rec_form.name.data = current_user_submission.user_name
+    else:
+        # Pre-fill form with display name
+        rec_form.name.data = get_user_display_name()
 
     return render_template('round/submit_phase.html',
                            rec_form=rec_form,

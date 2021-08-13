@@ -11,7 +11,7 @@ class UserProfileTestCase(UserTestCase):
 
     def test_get_user_profile(self):
         # Add a fake user to the database
-        add_user_to_db(self.DUMMY_USER_SP_ID)
+        add_user_to_db(self.DUMMY_USER_SP_ID, self.DUMMY_USER_DISPLAY_NAME)
 
         # Mock authentication of the fake user
         self.auth_dummy_user()

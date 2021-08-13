@@ -77,7 +77,7 @@ class RoundSubmitTestCase(RoundTestCase):
         2. Submit another song and make sure that your submission is changed
         """
         # Add a fake user to the database
-        add_user_to_db(self.DUMMY_USER_SP_ID)
+        add_user_to_db(self.DUMMY_USER_SP_ID, self.DUMMY_USER_DISPLAY_NAME)
 
         # Mock authentication of the fake user
         self.auth_dummy_user()

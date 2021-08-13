@@ -10,7 +10,7 @@ from musicrecs.errors.exceptions import MusicrecsError
 
 MAX_SPOTIFY_LINK_LENGTH = 100
 MAX_SPOTIFY_USER_ID_LENGTH = 50
-MAX_USERNAME_LENGTH = 50
+MAX_NAME_LENGTH = 50
 MAX_LONG_ID_LENGTH = 50
 
 
@@ -20,6 +20,7 @@ MAX_LONG_ID_LENGTH = 50
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     spotify_user_id = db.Column(db.String(MAX_SPOTIFY_USER_ID_LENGTH), unique=True, nullable=False)
+    display_name = db.Column(db.String(MAX_NAME_LENGTH))
 
     submissions = db.relationship('Submission', backref=db.backref('user', lazy=True))
     guesses = db.relationship('Guess', backref=db.backref('user', lazy=True))
@@ -31,7 +32,7 @@ class User(db.Model):
 class Submission(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     spotify_link = db.Column(db.String(MAX_SPOTIFY_LINK_LENGTH), nullable=False)
-    user_name = db.Column(db.String(MAX_USERNAME_LENGTH))
+    user_name = db.Column(db.String(MAX_NAME_LENGTH))
     shuffled_pos = db.Column(db.Integer)
 
     user_id = db.Column(db.Integer, db.ForeignKey('user.id'))
@@ -47,8 +48,8 @@ class Submission(db.Model):
 
     @validates('user_name')
     def validate_user_name(self, key, user_name):
-        if len(user_name) > MAX_USERNAME_LENGTH:
-            raise MusicrecsError(f"User name greater than storage limit of {MAX_USERNAME_LENGTH} characters.")
+        if len(user_name) > MAX_NAME_LENGTH:
+            raise MusicrecsError(f"User name greater than storage limit of {MAX_NAME_LENGTH} characters.")
         return user_name
 
     def __repr__(self):
@@ -57,7 +58,7 @@ class Submission(db.Model):
 
 class Guess(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    user_name = db.Column(db.String(MAX_USERNAME_LENGTH), nullable=False)
+    user_name = db.Column(db.String(MAX_NAME_LENGTH), nullable=False)
     music_num = db.Column(db.Integer, nullable=False)
     correct = db.Column(db.Boolean, nullable=False)
 
@@ -66,8 +67,8 @@ class Guess(db.Model):
 
     @validates('user_name')
     def validate_user_name(self, key, user_name):
-        if len(user_name) > MAX_USERNAME_LENGTH:
-            raise MusicrecsError(f"User name greater than storage limit of {MAX_USERNAME_LENGTH} characters.")
+        if len(user_name) > MAX_NAME_LENGTH:
+            raise MusicrecsError(f"User name greater than storage limit of {MAX_NAME_LENGTH} characters.")
         return user_name
 
     def __repr__(self) -> str:

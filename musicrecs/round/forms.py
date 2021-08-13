@@ -9,7 +9,7 @@ from wtforms.validators import DataRequired, Length, ValidationError
 from musicrecs import spotify_iface
 
 from musicrecs.round.helpers import GUESS_LINE_PATTERN, get_user_names, get_music_numbers, get_current_user_submission
-from musicrecs.database.models import MAX_USERNAME_LENGTH
+from musicrecs.database.models import MAX_NAME_LENGTH
 from musicrecs.spotify.item.spotify_playlist import SpotifyPlaylist
 
 
@@ -50,8 +50,8 @@ class _NewUserName(object):
         current_user_user_name = current_user_submission.user_name if current_user_submission is not None else None
 
         # Validate
-        if len(field.data) > MAX_USERNAME_LENGTH:
-            raise ValidationError(f'Name too long, must be fewer than {MAX_USERNAME_LENGTH} characters')
+        if len(field.data) > MAX_NAME_LENGTH:
+            raise ValidationError(f'Name too long, must be fewer than {MAX_NAME_LENGTH} characters')
         elif field.data.lower() == "snoozin":
             raise ValidationError('This town is only big enough for one snoozin...')
         elif field.data in get_user_names(form._round) and field.data != current_user_user_name:
@@ -120,7 +120,7 @@ class RoundForm(FlaskForm):
 
 
 class TrackrecForm(RoundForm):
-    name = StringField('What is your name?', validators=[DataRequired(), _NewUserName()])
+    name = StringField('Your name for this round', validators=[DataRequired(), _NewUserName()])
     spotify_link = StringField(
         'Spotify Track Link',
         description="Start typing to search for music, or directly input "
@@ -131,7 +131,7 @@ class TrackrecForm(RoundForm):
 
 
 class AlbumrecForm(RoundForm):
-    name = StringField('What is your name?', validators=[DataRequired(), _NewUserName()])
+    name = StringField('Your name for this round', validators=[DataRequired(), _NewUserName()])
     spotify_link = StringField(
         'Spotify Album Link',
         description="Start typing to search for music, or directly input "
