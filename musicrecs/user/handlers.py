@@ -40,7 +40,7 @@ def login():
     return redirect(next)
 
 
-@bp.route('/user/logout')
+@bp.route('/user/logout', methods=['POST'])
 def logout():
     spotify_user.logout()
 

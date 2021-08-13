@@ -37,7 +37,9 @@
                             <a class="dropdown-item" href="{{ url_for('user.rounds', music_type='track') }}">Your trackrecs</a>
                             <a class="dropdown-item" href="{{ url_for('user.rounds', music_type='album') }}">Your albumrecs</a>
                             <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" style="color: blue;" href="{{url_for('user.logout')}}">Log out</a>
+                            <form method="post" action="{{ url_for('user.logout')}}";>
+                                <input class="dropdown-item" type="submit" name="logout_from_spotify" value="Log out" style="color: blue;">
+                            </form>
                         </div>
                     </a>
                 {% else %}

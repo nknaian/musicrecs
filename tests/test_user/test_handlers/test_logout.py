@@ -7,7 +7,7 @@ from tests.test_user import UserTestCase
 
 
 class UserLogoutTestCase(UserTestCase):
-    """Test flows involving GET to the user.logout route
+    """Test flows involving POST to the user.logout route
     """
     def test_logout_user_from_mainindex(self):
         # Add a fake user to the database
@@ -16,9 +16,10 @@ class UserLogoutTestCase(UserTestCase):
         # Mock authentication of the fake user
         self.auth_dummy_user()
 
-        # Make GET to logout page from the main index page
-        response = self.client.get(
+        # Make POST to logout page from the main index page
+        response = self.client.post(
             url_for('user.logout'),
+            data=dict(logout_from_spotify="Log out"),
             follow_redirects=True,
             headers={
                 "Referer": url_for('main.index')  # set 'request.referrer' ('Referer' is not a typo lol)
@@ -39,9 +40,10 @@ class UserLogoutTestCase(UserTestCase):
         # Mock authentication of the fake user
         self.auth_dummy_user()
 
-        # Make GET to logout page from the user profile page
-        response = self.client.get(
+        # Make POST to logout page from the user profile page
+        response = self.client.post(
             url_for('user.logout'),
+            data=dict(logout_from_spotify="Log out"),
             follow_redirects=True,
             headers={
                 "Referer": url_for('user.profile')  # set 'request.referrer' ('Referer' is not a typo lol)
@@ -69,9 +71,10 @@ class UserLogoutTestCase(UserTestCase):
             snoozin_rec_type=SnoozinRecType.random,
         )
 
-        # Make GET to logout page from the round page
-        response = self.client.get(
+        # Make POST to logout page from the round page
+        response = self.client.post(
             url_for('user.logout'),
+            data=dict(logout_from_spotify="Log out"),
             follow_redirects=True,
             headers={
                 # set 'request.referrer' ('Referer' is not a typo lol)
