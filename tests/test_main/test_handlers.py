@@ -6,21 +6,37 @@ from flask import url_for
 from musicrecs.database.models import Round
 from musicrecs.enums import MusicType, RoundStatus, SnoozinRecType
 
-from tests import MusicrecsTestCase
+from tests.test_main import MainTestCase
 
 
-class MainIndexTestCase(MusicrecsTestCase):
-    """Test GET and POST on the main index route.
+class MainIndexTestCase(MainTestCase):
+    """Test GET on main index route."""
+    def test_get_index(self):
+        response = self.client.get(url_for("main.index"))
+        self.assert_200(response)
+        self.assertIn(b"Musicrecs is a platform for sharing", response.data)
+
+
+class MainAboutTestCase(MainTestCase):
+    """Test GET on main about route."""
+    def test_get_about(self):
+        response = self.client.get(url_for("main.about"))
+        self.assert_200(response)
+        self.assertIn(b"Each recommendation round has three phases", response.data)
+
+
+class MainCreateRoundTestCase(MainTestCase):
+    """Test GET and POST on main create_round route.
 
     For POST test, try posting with form data filled in
     to create a new round.
     """
     ROUND_URL_RE_PATTERN = "(?<=/round/)(.{22})$"
 
-    def test_get(self):
-        response = self.client.get(url_for("main.index"))
+    def test_get_create_round(self):
+        response = self.client.get(url_for("main.create_round"))
         self.assert_200(response)
-        self.assertIn(b"Musicrecs", response.data)
+        self.assertIn(b"Describe the round", response.data)
 
     def test_create_round_track_random(self):
         self._test_create_round(
@@ -52,7 +68,7 @@ class MainIndexTestCase(MusicrecsTestCase):
 
     def _test_create_round(self, description, music_type, snoozin_rec_type):
         # Make post with `NewRoundForm` data
-        response = self.client.post(url_for("main.index"), data=dict(
+        response = self.client.post(url_for("main.create_round"), data=dict(
             description=description,
             music_type=music_type,
             snoozin_rec_type=snoozin_rec_type

@@ -20,14 +20,8 @@ h5 {
     white-space: normal;
 }
 
-.div_listen {
-    min-width: 200px;
-}
-
-.div_main {
+.div_main_about_section {
     padding: 15px;
-    margin-top: 10px;
-    margin-bottom: 10px;
 }
 
 .div_round_section {
@@ -83,21 +77,11 @@ h5 {
     border: 0;
 }
 
-.p_index_phase {
-    margin-left: 20px;
-    margin-bottom: 10px;
-}
-
-.p_index_about {
-    margin-left: 10px;
-}
-
-.p_index_faq_q {
-    margin-left: 10px;
+.p_main_about_q {
     font-weight: bold;
 }
 
-.p_index_faq_a {
+.p_main_about_a {
     margin-left: 20px;
     font-style: italic;
 }
@@ -119,6 +103,7 @@ h5 {
     margin-bottom: 2px;
     text-decoration: line-through;
 }
+
 
 /* ID Styles (organized by page) */
 

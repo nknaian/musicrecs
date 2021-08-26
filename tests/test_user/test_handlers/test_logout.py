@@ -31,7 +31,7 @@ class UserLogoutTestCase(UserTestCase):
         # will be on the main page. I can't figure out how to check the url
         # of the response so this is the best I could come up with.
         self.assert200(response)
-        self.assertIn(bytes("Welcome to Musicrecs!", 'utf-8'), response.data)
+        self.assertIn(bytes("Musicrecs is a platform", 'utf-8'), response.data)
 
     def test_logout_user_from_userprofile(self):
         # Add a fake user to the database
@@ -55,7 +55,7 @@ class UserLogoutTestCase(UserTestCase):
         # will be on the main page. I can't figure out how to check the url
         # of the response so this is the best I could come up with.
         self.assert200(response)
-        self.assertIn(bytes("Welcome to Musicrecs!", 'utf-8'), response.data)
+        self.assertIn(bytes("Musicrecs is a platform", 'utf-8'), response.data)
 
     def test_logout_user_from_round(self):
         # Add a fake user to the database

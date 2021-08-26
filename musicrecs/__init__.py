@@ -7,6 +7,8 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_bootstrap import Bootstrap
 from flask_session import Session
+from flask_caching import Cache
+from flask_apscheduler import APScheduler
 
 from musicrecs.spotify.spotify import Spotify
 from musicrecs.config import Config
@@ -14,6 +16,12 @@ from musicrecs.config import Config
 
 # Create sqlalchemy database
 db = SQLAlchemy()
+
+# Create cache
+cache = Cache()
+
+# Create scheduler
+scheduler = APScheduler()
 
 # Create 'client credentials' spotify interface
 spotify_iface = Spotify()
@@ -36,6 +44,15 @@ def create_app(config_class=Config):
 
     # Initialize database
     db.init_app(app)
+
+    # Initialize cache
+    cache.init_app(app)
+
+    # Initialize scheduler and start background tasks
+    scheduler.init_app(app)
+
+    from musicrecs.main import background_tasks
+    scheduler.start()
 
     # Register blueprints
     from musicrecs.main import bp as main_bp

@@ -136,3 +136,4 @@ setup.sh
 test.html
 .flask_session/
 .spotify_user_caches/
+.flask_caching/

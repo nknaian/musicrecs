@@ -5,9 +5,12 @@ from flask.helpers import url_for
 import flask_testing
 
 from musicrecs.config import Config
+from musicrecs.spotify.item.spotify_music import SpotifyMusic
 import musicrecs.spotify.spotify_user as sp_user
 
-from musicrecs import create_app, db
+from musicrecs import spotify_iface
+
+from musicrecs import create_app, db, scheduler
 
 
 class TestingConfig(Config):
@@ -32,11 +35,15 @@ class MusicrecsTestCase(flask_testing.TestCase, unittest.TestCase):
         # Mock the user being logged out
         self.unauth_dummy_user()
 
+        # Mock get_music_from_link
+        spotify_iface.get_music_from_link = Mock(side_effect=self._mock_get_music_from_link)
+
     def tearDown(self):
         db.session.remove()
         db.drop_all()
+        scheduler.shutdown()
 
-    """MOCK USER INTERFACE"""
+    """MOCK SPOTIFY USER INTERFACE"""
 
     DUMMY_USER_SP_ID = "12345ABC"
     DUMMY_USER_DISPLAY_NAME = "Dummy User"
@@ -56,3 +63,14 @@ class MusicrecsTestCase(flask_testing.TestCase, unittest.TestCase):
         sp_user.is_authenticated = Mock(side_effect=lambda *args: False)
         sp_user.get_user_display_name = Mock(side_effect=self._raise_sp_test_exception)
         sp_user.auth_new_user = Mock(side_effect=self.auth_dummy_user)
+
+    """MOCK SPOTIFY MUSIC"""
+
+    def _mock_get_music_from_link(self, *args):
+        """Return a spotify music object whose link attribute
+        is equal to the link passed in and that has a dummy img url
+        """
+        music_mock = Mock(spec=SpotifyMusic)
+        music_mock.link = args[1]
+        music_mock.img_url = ""
+        return music_mock

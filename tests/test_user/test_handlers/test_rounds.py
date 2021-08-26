@@ -1,11 +1,7 @@
-from musicrecs.spotify.item.spotify_music import SpotifyMusic
-from unittest.mock import Mock
 from flask import url_for
 
 from musicrecs.database.helpers import add_round_to_db, add_submission_to_db, add_user_to_db
 from musicrecs.enums import MusicType, SnoozinRecType
-
-from musicrecs import spotify_iface
 
 from tests.test_user import UserTestCase
 
@@ -13,19 +9,6 @@ from tests.test_user import UserTestCase
 class UserRoundsTestCase(UserTestCase):
     """Test GET to the 'user.rounds' routes
     """
-    def setUp(self):
-        super().setUp()
-
-        spotify_iface.get_music_from_link = Mock(side_effect=self._mock_get_music_from_link)
-
-    def _mock_get_music_from_link(*args):
-        """Return a spotify music object whose link attribute
-        is equal to the link passed in
-        """
-        music_mock = Mock(spec=SpotifyMusic)
-        music_mock.link = args[1]
-        return music_mock
-
     def test_get_user_trackrecs(self):
         # Add a fake user to the database
         add_user_to_db(self.DUMMY_USER_SP_ID, self.DUMMY_USER_DISPLAY_NAME)

@@ -7,4 +7,6 @@ Flask-WTF
 Flask-Bootstrap4
 Flask-Session
 Flask-Testing
+Flask-Caching
+Flask-APScheduler
 spotipy == 2.16.1
