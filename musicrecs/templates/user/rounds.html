@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<h4>Your {{music_type}}recs</h4>
+<div class="div_user_rounds_section">
+    <h4>Your {{music_type}}recs</h4>
+</div>
 
 <div class="row">
     <div class="col" style="text-align: center;">
@@ -13,36 +15,40 @@
 </div>
 
 {% for round, music in round_music_subs %}
-    <a class="container-fluid bg-light text-dark btn" id="user_round_block" role="button" href="{{url_for('round.index', long_id=round.long_id)}}" style="padding: 15px; margin-bottom: 15px;">
-        <div class="row" style="margin-top: 15px;">
-            <div class="col-6">
-                <div class="div_round_info" style="margin-bottom: 40px;">{{ round.description }}</div>
-                {% if round.submissions %}
+    <div class="div_user_rounds_section">
+        <a class="container-fluid bg-dark text-light btn" id="user_round_block" role="button" href="{{url_for('round.index', long_id=round.long_id)}}">
+            <div class="row">
+                <div class="col-6">
+                    <div class="div_round_info">{{ round.description|truncate(60,true) }}</div>
+                    {% if round.submissions %}
+                        <div class="div_round_info font-italic">
+                            including:<br>
+                            {% for submission in round.submissions %}
+                                {% if loop.index0 < 4 %}
+                                    <span class="div_recommender_name">{{submission.user_name|truncate(15,true)}}</span>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+                    {% endif %}
                     <div class="div_round_info font-italic">
-                        including...<br>
-                        {% for submission in round.submissions %}
-                            <span class="div_recommender_name">{{submission.user_name}}</span>
-                        {% endfor %}
+                        created on {{ round_created_date(round) }}
                     </div>
-                {% endif %}
-                <div class="div_round_info font-italic">
-                    created on {{ round_created_date(round) }}
                 </div>
-            </div>
-            <div class="col-6">
-                <div class="row justify-content-center">
-                    <div class="col-auto">
-                        <img src="{{music.img_url}}"
-                            alt="{{music.name}}"
-                            style="width: 81px">  <!-- Hardcode to 81px because album img size is too large on small screens to fit in its column-->
-                    </div>
-                    <div class="col-auto">
-                        <b>{{music.name}}</b> by {{music.get_artists_comma_separated()}}
+                <div class="col-6">
+                    <div class="row justify-content-center" style="padding-top: 20px;">
+                        <div class="col-auto">
+                            <img src="{{music.img_url}}"
+                                alt="{{music.name}}"
+                                style="width: 81px">  <!-- Hardcode to 81px because album img size is too large on small screens to fit in its column-->
+                        </div>
+                        <div class="col-auto">
+                            <b>{{music.name}}</b> by {{music.get_artists_comma_separated()}}
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </a>
+        </a>
+    </div>
 {% endfor %}
 {% endblock %}
 
