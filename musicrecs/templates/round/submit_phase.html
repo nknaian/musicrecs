@@ -17,7 +17,7 @@
 
 {% block round_content %}
     {% if current_user_music %}
-        <div class="bg-light div_round_content">
+        <div class="bg-light div_round_section">
             <h4>Your current submission</h4>
             <a class="bg-dark text-light div_round_item btn" role="button" href="{{current_user_music.link}}">
                 <div class="row">
@@ -26,7 +26,7 @@
                             alt="{{current_user_music.name}}"
                             class=img_albums>
                     </div>
-                    <div class="col div_listen">
+                    <div class="col div_round_item_name">
                         <span class="align-middle"><b>{{current_user_music.name}}</b> by {{current_user_music.get_artists_comma_separated()}}</span>
                     </div>
                 </div>
@@ -34,7 +34,7 @@
         </div>
     {% endif %}
 
-    <div class="bg-light div_round_content">
+    <div class="bg-light div_round_section">
         <h4>Submit music to the round</h4>
         <form class="form form-horizontal" method="post" role="form">
             {{ rec_form.hidden_tag() }}

@@ -30,17 +30,9 @@ h5 {
     margin-bottom: 10px;
 }
 
-.div_round_info {
-    margin-top: 10px;
-    margin-bottom: 10px;
-    text-align: center;
-    font-size: small;
-}
-
-.div_round_content {
+.div_round_section {
     padding: 15px;
-    margin-top: 10px;
-    margin-bottom: 10px;
+    margin: 10px;
 }
 
 .div_round_item {
@@ -49,6 +41,16 @@ h5 {
     display: inline-block;
 }
 
+.div_round_item_name {
+    min-width: 200px;
+}
+
+.div_round_info {
+    margin-top: 10px;
+    margin-bottom: 10px;
+    text-align: center;
+    font-size: small;
+}
 
 .div_round_revealed_music_user_name {
     text-align: center;
