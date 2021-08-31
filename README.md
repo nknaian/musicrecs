@@ -3,13 +3,12 @@ A Spotify-powered music recommendation game with snoozin 'n friends
 
 # Running locally
 ## Requirements
-- Linux
 - python3
+- sqlite3 (ex Ubuntu: `apt-get install sqlite3`)
 
 ## Setup
 - Make a spotify developer app through "https://developer.spotify.com/dashboard"
     - note the client id and client secret for your new app
-- install sqlite with `apt-get install sqlite3`
 - Create a python3 virtual environment `python3 -m venv name-of-venv`
 - Activate your virtual environment `source path-to-venv/bin/activate`
 - Install required packages with `pip install -r requirements.txt`
@@ -19,7 +18,7 @@ A Spotify-powered music recommendation game with snoozin 'n friends
     print(secrets.token_urlsafe(16))
     ```
 - Create a file named *.env* at the root of your repo, and put in the following export commands
-  (replacing 'insert here' values with your own values):
+  (replacing placeholder values with your own values):
     ```bash
     export SPOTIPY_CLIENT_ID="insert-spotify-client-id-here"
     export SPOTIPY_CLIENT_SECRET="insert-spotify-client-secret-here"
