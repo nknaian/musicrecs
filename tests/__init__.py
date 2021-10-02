@@ -35,8 +35,9 @@ class MusicrecsTestCase(flask_testing.TestCase, unittest.TestCase):
         # Mock the user being logged out
         self.unauth_dummy_user()
 
-        # Mock get_music_from_link
+        # Mock parts of spotify_iface used by tests
         spotify_iface.get_music_from_link = Mock(side_effect=self._mock_get_music_from_link)
+        spotify_iface.search_for_music = Mock(side_effect=self._mock_search_for_music)
 
     def tearDown(self):
         db.session.remove()
@@ -74,3 +75,12 @@ class MusicrecsTestCase(flask_testing.TestCase, unittest.TestCase):
         music_mock.link = args[1]
         music_mock.img_url = ""
         return music_mock
+
+    def _mock_search_for_music(self, *args, **kwargs):
+        """Return a list of one spotify music object with a dummy
+        link and image to represent the search results
+        """
+        music_mock = Mock(spec=SpotifyMusic)
+        music_mock.link = ""
+        music_mock.img_url = ""
+        return [music_mock]

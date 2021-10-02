@@ -51,7 +51,7 @@ def create_app(config_class=Config):
     # Initialize scheduler and start background tasks
     scheduler.init_app(app)
 
-    from musicrecs.main import background_tasks
+    from musicrecs.main import update_bg_imgs
     scheduler.start()
 
     # Register blueprints

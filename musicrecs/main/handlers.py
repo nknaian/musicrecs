@@ -3,7 +3,7 @@ from flask import render_template, redirect, url_for, flash
 
 from musicrecs.database.helpers import add_round_to_db
 
-from . import bp
+from . import bp, schedule_round_advance
 from .forms import NewRoundForm
 
 
@@ -22,6 +22,9 @@ def create_round():
         create_round = add_round_to_db(new_round_form.description.data,
                                        new_round_form.music_type.data,
                                        new_round_form.snoozin_rec_type.data)
+
+        if new_round_form.scheduled_round.data is True:
+            schedule_round_advance.add_sec_interval_job(create_round, new_round_form.scheduled_round_interval.data)
 
         # Go to the page for the new round
         return redirect(url_for('round.index', long_id=create_round.long_id))

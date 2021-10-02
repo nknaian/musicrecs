@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import SelectField, SubmitField, TextAreaField
+from wtforms import SelectField, SubmitField, TextAreaField, BooleanField, IntegerField
 from wtforms.validators import DataRequired
 from musicrecs.enums import SnoozinRecType, MusicType
 
@@ -16,4 +16,6 @@ class NewRoundForm(FlaskForm):
         choices=SnoozinRecType.choices(),
         coerce=SnoozinRecType.coerce
     )
+    scheduled_round = BooleanField('Scheduled round?')
+    scheduled_round_interval = IntegerField('Scheduled interval (seconds)', validators=[])
     submit = SubmitField('Create Round')

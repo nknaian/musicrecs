@@ -181,6 +181,7 @@ def advance(long_id):
     round = Round.query.filter_by(long_id=long_id).first()
 
     # Perform actions that are round phase transition specific
+    # TODO: Refactor to reduce code duplication here with schedule_round_advance.py
     if 'advance_to_listen' in request.form and round.status == RoundStatus.submit:
         # Add snoozin's rec:
         new_submission = Submission(
