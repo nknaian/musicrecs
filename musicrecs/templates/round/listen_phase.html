@@ -24,7 +24,7 @@
                         </div>
                     {% endif %}
                     <div class="col div_round_item_name">
-                        <span class="align-middle">{{playlist.name}}</span>
+                        {{playlist.name}}
                     </div>
                 </div>
             </a>
@@ -60,7 +60,7 @@
                             class=img_albums>
                     </div>
                     <div class="col div_round_item_name">
-                        <span class="align-middle"><b>{{music.name}}</b> by {{music.get_artists_comma_separated()}}</span>
+                        <b>{{music.name}}</b> by {{music.get_artists_comma_separated()}}
                     </div>
                 </div>
 
