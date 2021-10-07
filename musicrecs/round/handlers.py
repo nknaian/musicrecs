@@ -72,7 +72,10 @@ def submit(long_id):
         return redirect(url_for('round.submit', long_id=long_id))
 
     elif rec_form.errors:
-        flash("There were errors in your rec submission", "warning")
+        if any(key in rec_form.errors for key in ['name', 'spotify_link']):
+            flash("There were errors in your rec submission. See below for details", "warning")
+        else:
+            flash("Please try submitting your rec again.", "error")
 
     # Deal with the current user's submission
     current_user_music = None
@@ -124,7 +127,10 @@ def listen(long_id):
         return redirect(url_for('round.listen', long_id=long_id))
     # Notify the user if there were errors
     elif playlist_form and playlist_form.errors:
-        flash("There were errors in your rec submission", "warning")
+        if any(key in playlist_form.errors for key in ['name']):
+            flash("There were errors in your playlist submission. See below for details", "warning")
+        else:
+            flash("Please try submitting your rec again.", "error")
 
     # Process guess submissions
     guess_form = GuessForm(round)
@@ -141,7 +147,11 @@ def listen(long_id):
         return redirect(url_for('round.listen', long_id=round.long_id))
 
     elif guess_form.errors:
-        flash("There were errors in your guess", "warning")
+        if any(key in guess_form.errors for key in ['name', 'guess_field']):
+            flash("There were errors in your guess. See below for details", "warning")
+        else:
+            flash("Please try submitting your guess again.", "error")
+
     else:
         # Prefill the usernames, with the appropriate number of rows
         guess_form.guess_field.render_kw["rows"] = len(round.submissions)
