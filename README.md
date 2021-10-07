@@ -1,5 +1,8 @@
 # musicrecs
-A Spotify-powered music recommendation game with snoozin 'n friends
+A Spotify-powered music recommendation platform with snoozin 'n friends
+
+# See it in action
+The website is currently deployed at https://www.musicrecs.net/
 
 # Running locally
 Instructions below show how to run the website locally for development purposes. This guide is geared towards linux but as far
