@@ -35,16 +35,16 @@ as I'm aware, it should be possible to do everything on Mac or Windows as well.
     ```
     - **note**: The sqlite database will be created at the path you specify upon the first run of the site.
 
-# Run
-## syntax and style
+## Run
+### syntax and style
 - Activate your virtual environment `source path-to-venv/bin/activate`
 - Run: `flake8`
 
-## unit tests
+### unit tests
 - Activate your virtual environment `source path-to-venv/bin/activate`
 - Run: `python -m unittest`
 
-## Run website in browser locally
+### Run website in browser locally
 - Setup the spotify redirect uri:
     - Add the following line to your *.env* file: `export SPOTIPY_REDIRECT_URI="http://localhost:5000/sp_auth_complete"`
     - In your spotify developer app (https://developer.spotify.com/dashboard) add this *Redirect URI*: `http://localhost:5000/sp_auth_complete`
@@ -52,7 +52,7 @@ as I'm aware, it should be possible to do everything on Mac or Windows as well.
 - From the top level musicrecs directory, run: `flask run`
 - Open `localhost:5000` in your browser
 
-## Run website in browser on different device on same LAN (ex: to test on mobile)
+### Run website in browser on different device on same LAN (ex: to test on mobile)
 - Setup the spotify redirect uri:
     - Add the following line to your *.env* file: `export SPOTIPY_REDIRECT_URI="http://<insert-your-host-ip>:5000/sp_auth_complete"`
     - In your spotify developer app (https://developer.spotify.com/dashboard) add this *Redirect URI*: `http://<insert-your-host-ip>:5000/sp_auth_complete`
