@@ -1,7 +1,10 @@
 import secrets
 
+from flask.helpers import url_for
+
 from musicrecs.database.models import Guess, Round, Submission, User
 from musicrecs.enums import RoundStatus
+from musicrecs.errors.exceptions import MusicrecsAlert
 
 from musicrecs import db
 
@@ -30,6 +33,12 @@ def add_submission_to_db(round_id, user_id, user_name, spotify_link):
 
     Return the newly added submission object
     """
+    if Submission.query.filter_by(user_name=user_name, round_id=round_id).first() or \
+            (user_id is not None and Submission.query.filter_by(user_id=user_id, round_id=round_id).first()):
+        round = Round.query.filter_by(id=round_id).first()
+        raise MusicrecsAlert("You've already submitted!",
+                             redirect_location=url_for(f'round.{round.status.name}', long_id=round.long_id))
+
     submission = Submission(
         spotify_link=spotify_link,
         user_id=user_id,
