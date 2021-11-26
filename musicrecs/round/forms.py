@@ -2,7 +2,8 @@ import re
 
 from flask_wtf import FlaskForm
 from wtforms import StringField, SubmitField
-from wtforms.fields.core import SelectField
+from wtforms.fields.choices import SelectField
+
 from wtforms.fields.simple import TextAreaField
 from wtforms.validators import DataRequired, Length, ValidationError
 
