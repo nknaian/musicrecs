@@ -75,7 +75,7 @@ def submit(long_id):
         if any(key in rec_form.errors for key in ['name', 'spotify_link']):
             flash("There were errors in your rec submission. See below for details", "warning")
         else:
-            flash("Please try submitting your rec again.", "error")
+            flash("Please try submitting your rec again.", "warning")
 
     # Deal with the current user's submission
     current_user_music = None
@@ -130,7 +130,7 @@ def listen(long_id):
         if any(key in playlist_form.errors for key in ['name']):
             flash("There were errors in your playlist submission. See below for details", "warning")
         else:
-            flash("Please try submitting your rec again.", "error")
+            flash("Please try submitting the playlist again.", "warning")
 
     # Process guess submissions
     guess_form = GuessForm(round)
@@ -150,7 +150,7 @@ def listen(long_id):
         if any(key in guess_form.errors for key in ['name', 'guess_field']):
             flash("There were errors in your guess. See below for details", "warning")
         else:
-            flash("Please try submitting your guess again.", "error")
+            flash("Please try submitting your guess again.", "warning")
 
     else:
         # Prefill the usernames, with the appropriate number of rows
