@@ -1,7 +1,9 @@
+import os
 from musicrecs.user.helpers import current_user_id, get_user_display_name
 import re
 from flask import render_template, redirect, url_for, flash
 from flask.globals import request
+import pika
 
 from musicrecs import db
 from musicrecs import spotify_iface
@@ -67,6 +69,17 @@ def submit(long_id):
         flash("Successfully submitted your recommendation: "
               f"{spotify_iface.get_music_from_link(round.music_type, rec_form.spotify_link.data)}",
               "success")
+
+        broker_url = os.environ.get('CLOUDAMQP_URL')
+        connection = pika.BlockingConnection(
+            pika.URLParameters(broker_url))
+        channel = connection.channel()
+
+        channel.exchange_declare(exchange='round_activity', exchange_type='fanout')
+
+        channel.basic_publish(exchange='round_activity', routing_key='', body=f"{rec_form.name.data} submitted to round {round.long_id}")
+        print(" [x] Sent a message")
+        connection.close()
 
         # Redirect back to the round after successful submission
         return redirect(url_for('round.submit', long_id=long_id))

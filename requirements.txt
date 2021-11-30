@@ -1,5 +1,6 @@
 flake8
 python-dotenv
+pika
 Flask
 Flask-sqlalchemy
 Flask-WTF
