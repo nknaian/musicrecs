@@ -76,6 +76,12 @@ def submit(long_id):
             flash("There were errors in your rec submission. See below for details", "warning")
         else:
             flash("Please try submitting your rec again.", "warning")
+    else:
+        # Pre-fill the form name based on logged in user's submission or name
+        if current_user_submission is not None:
+            rec_form.name.data = current_user_submission.user_name
+        else:
+            rec_form.name.data = get_user_display_name()
 
     # Deal with the current user's submission
     current_user_music = None
@@ -85,12 +91,6 @@ def submit(long_id):
 
         # Change the submit button text to reflect that this will change their submission
         rec_form.submit_rec.label.text = rec_form.submit_rec.label.text.replace("Submit", "Change")
-
-        # Pre-fill form with current choice for user name
-        rec_form.name.data = current_user_submission.user_name
-    else:
-        # Pre-fill form with display name
-        rec_form.name.data = get_user_display_name()
 
     return render_template('round/submit_phase.html',
                            rec_form=rec_form,
